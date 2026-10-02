@@ -1,0 +1,6 @@
+{
+  "name": "BE SAWA - Mental Wellness & Counselling",
+  "description": "A safe, confidential mental wellness and counselling platform connecting clients with verified therapists in Nairobi, Kenya.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

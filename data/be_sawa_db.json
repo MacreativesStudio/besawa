@@ -1,0 +1,2083 @@
+{
+  "roles": [
+    {
+      "id": "role_super_admin",
+      "name": "SUPER_ADMIN",
+      "description": "Complete system authority and compliance oversight",
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "role_admin",
+      "name": "ADMIN",
+      "description": "Operations, bookings, therapists, and content management",
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "role_therapist",
+      "name": "THERAPIST",
+      "description": "Licensed mental health practitioner view",
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "role_client",
+      "name": "CLIENT",
+      "description": "Public service user",
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "role_business_owner_admin",
+      "name": "BUSINESS_OWNER_ADMIN",
+      "description": "Muthoni Maina - Business owner, clinical oversight, appointments, rates & settlements",
+      "created_at": "2026-09-28T06:58:16.892Z"
+    },
+    {
+      "id": "role_platform_admin",
+      "name": "PLATFORM_ADMIN",
+      "description": "Stephen / Ma Creatives - Technical infrastructure, platform maintenance & security audits",
+      "created_at": "2026-09-28T06:58:16.892Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "usr_super_admin_1",
+      "email": "admin@besawa.ke",
+      "password_hash": "$2b$12$jLjFHg2CiNq2GKkurUcDJOPdtc3J3wyAb.zFK7VHzuphuCqlqyN0O",
+      "full_name": "Muthoni Maina",
+      "phone": "0710759422",
+      "is_active": true,
+      "last_login_at": "2026-09-30T05:08:38.039Z",
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-30T05:04:30.624Z",
+      "session_version": 1
+    },
+    {
+      "id": "usr_therapist_1",
+      "email": "amani.mutua@besawa.ke",
+      "password_hash": "$2b$10$gY0IDqaU2y6exTTUtmY9i..5x37UdD2Z5oImX1Pfr7PT/Z6ovt3/.",
+      "full_name": "Dr. Amani Mutua",
+      "phone": "0745024278",
+      "is_active": true,
+      "last_login_at": null,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "usr_therapist_2",
+      "email": "wanjiku.mwangi@besawa.ke",
+      "password_hash": "$2b$10$gY0IDqaU2y6exTTUtmY9i..5x37UdD2Z5oImX1Pfr7PT/Z6ovt3/.",
+      "full_name": "Wanjiku Mwangi",
+      "phone": "0710759422",
+      "is_active": true,
+      "last_login_at": null,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "usr_platform_admin_stephen",
+      "email": "macreatives.global@gmail.com",
+      "password_hash": "$2b$10$3FV5IyIZFUCHT4kMsjfC/Oowngy9UQoKAwwQFhSKnG4yyQwriN2S.",
+      "full_name": "Stephen (Ma Creatives)",
+      "phone": "0710759422",
+      "is_active": true,
+      "last_login_at": "2026-09-29T04:57:18.65Z",
+      "created_at": "2026-09-28T06:58:16.892Z",
+      "updated_at": "2026-09-28T06:58:16.892Z"
+    }
+  ],
+  "user_roles": [
+    {
+      "user_id": "usr_super_admin_1",
+      "role_id": "role_super_admin",
+      "assigned_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "user_id": "usr_therapist_1",
+      "role_id": "role_therapist",
+      "assigned_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "user_id": "usr_therapist_2",
+      "role_id": "role_therapist",
+      "assigned_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "user_id": "usr_super_admin_1",
+      "role_id": "role_business_owner_admin",
+      "assigned_at": "2026-09-28T06:58:16.892Z"
+    },
+    {
+      "user_id": "usr_platform_admin_stephen",
+      "role_id": "role_platform_admin",
+      "assigned_at": "2026-09-28T06:58:16.892Z"
+    }
+  ],
+  "therapists": [
+    {
+      "id": "thp_magdalene_mwende",
+      "user_id": null,
+      "full_name": "Magdalene Mwende Kimanzi",
+      "title": "Psychological Counsellor",
+      "bio": "Magdalene specializes in compassionate trauma recovery and anxiety management. Grounded in empathetic listening, she provides a safe, non-judgmental space for clients to process overwhelming experiences and rebuild internal calm.",
+      "years_experience": 5,
+      "languages": [
+        "Kiswahili",
+        "English"
+      ],
+      "areas_of_practice": [
+        "Trauma",
+        "Anxiety",
+        "Emotional Resilience",
+        "Life Transitions"
+      ],
+      "profile_photo_url": "/images/therapists/magdalene.jpg",
+      "verification_status": "APPROVED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Approved practitioner. Specialization: trauma, anxiety. Languages: Kiswahili, English.",
+      "created_at": "2026-09-28T07:48:03.982Z",
+      "updated_at": "2026-09-29T04:16:00.372Z"
+    },
+    {
+      "id": "thp_chuot_magok",
+      "user_id": null,
+      "full_name": "Chuot Magok",
+      "title": "Adolescent & Trauma Specialist",
+      "bio": "Chuot focuses on trauma rehabilitation, adolescent mental health, and acute life stress. Experienced in cross-cultural counselling across English and Sudanese dialects, fostering resilience and emotional safety.",
+      "years_experience": 5,
+      "languages": [
+        "English",
+        "Sudanese"
+      ],
+      "areas_of_practice": [
+        "Trauma",
+        "Adolescent Care",
+        "Stress Management",
+        "Youth Resilience"
+      ],
+      "profile_photo_url": "/images/therapists/chuot.jpg",
+      "verification_status": "APPROVED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Approved practitioner. Specialties: trauma, adolescent, stress. Languages: English, Sudanese.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-09-29T04:16:07.631Z"
+    },
+    {
+      "id": "thp_ikwa_bawoso",
+      "user_id": null,
+      "full_name": "Ikwa Bawoso Levi",
+      "title": "Mental Wellness Counsellor",
+      "bio": "Ikwa provides compassionate psychological care across stress alleviation, anxiety navigation, grief support, and self-esteem restoration. Fluent in English and French.",
+      "years_experience": 5,
+      "languages": [
+        "English",
+        "French"
+      ],
+      "areas_of_practice": [
+        "Stress",
+        "Anxiety",
+        "Grief",
+        "Self-Esteem"
+      ],
+      "profile_photo_url": "/images/therapists/bawoso.jpg",
+      "verification_status": "APPROVED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Approved bilingual practitioner. Specialties: stress, anxiety, grief, self-esteem. Languages: English, French.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-09-29T04:16:13.604Z"
+    },
+    {
+      "id": "thp_caroline_nyaguthii",
+      "user_id": null,
+      "full_name": "Caroline Nyaguthii Maina",
+      "title": "Child & Family Counsellor",
+      "bio": "Caroline supports clients through grief, chronic stress, anxiety, personal self-development, and emotional wellness for children and families with gentle presence.",
+      "years_experience": 6,
+      "languages": [
+        "Kiswahili",
+        "English"
+      ],
+      "areas_of_practice": [
+        "Grief",
+        "Stress",
+        "Anxiety",
+        "Self-Development",
+        "Kids"
+      ],
+      "profile_photo_url": "/images/therapists/caroline.jpg",
+      "verification_status": "APPROVED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Approved practitioner. Specialties: grief, stress, anxiety, self-development, kids.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-09-29T04:16:21.516Z"
+    },
+    {
+      "id": "thp_jeremiah_parseketo",
+      "user_id": null,
+      "full_name": "Jeremiah Parseketo Lei",
+      "title": "Youth & Inclusive Care Counsellor",
+      "bio": "Jeremiah specializes in trauma integration, anxiety relief, youth mental wellness, and accessible psychological care for physically challenged individuals.",
+      "years_experience": 6,
+      "languages": [
+        "Kiswahili",
+        "English"
+      ],
+      "areas_of_practice": [
+        "Trauma",
+        "Anxiety",
+        "Physically Challenged",
+        "Youth"
+      ],
+      "profile_photo_url": "/images/therapists/jeremiah.jpg",
+      "verification_status": "APPROVED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Approved practitioner. Specialties: trauma, anxiety, physically challenged, youth.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-09-29T04:16:29.629Z"
+    },
+    {
+      "id": "thp_joyce_wothaya",
+      "user_id": null,
+      "full_name": "Joyce Wothaya Kamau",
+      "title": "Child & Adolescent Behavioural Counsellor",
+      "bio": "Joyce offers therapeutic guidance in grief recovery, healthy self-development, behavioral interventions, and emotional support for children and adolescents.",
+      "years_experience": 7,
+      "languages": [
+        "Kiswahili",
+        "English"
+      ],
+      "areas_of_practice": [
+        "Grief",
+        "Self-Development",
+        "Behavioural",
+        "Kids",
+        "Adolescent"
+      ],
+      "profile_photo_url": "/images/therapists/joice.jpg",
+      "verification_status": "APPROVED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Approved practitioner. Specialties: grief, self-development, behavioural, kids, adolescent.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-09-29T04:16:37.622Z"
+    },
+    {
+      "id": "thp_patrick_rinye",
+      "user_id": null,
+      "full_name": "Patrick Rinye",
+      "title": "Youth & Trauma Specialist",
+      "bio": "Patrick is dedicated to youth empowerment, anxiety relief, trauma integration, and compassionate grief companionship in structured, safe environments.",
+      "years_experience": 5,
+      "languages": [
+        "Kiswahili",
+        "English"
+      ],
+      "areas_of_practice": [
+        "Youth",
+        "Anxiety",
+        "Trauma",
+        "Grief"
+      ],
+      "profile_photo_url": "/images/therapists/patrick.jpg",
+      "verification_status": "APPROVED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Approved practitioner. Specialties: youth, anxiety, trauma, grief.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-09-29T04:15:55.967Z"
+    },
+    {
+      "id": "thp_unnamed_pending_8",
+      "user_id": null,
+      "full_name": "Practitioner Candidate (Profile Incomplete)",
+      "title": "Practitioner Candidate",
+      "bio": "Submitted practitioner profile currently pending identity details and credential verification. Withheld from public directory.",
+      "years_experience": 0,
+      "languages": [
+        "English"
+      ],
+      "areas_of_practice": [
+        "General Wellness"
+      ],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "One additional unnamed practitioner profile exists in submitted material. Withheld from public directory until required identity and professional information is supplied.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-09-28T07:48:03.983Z"
+    },
+    {
+      "id": "thp_muthoni_maina",
+      "user_id": "usr_super_admin_1",
+      "full_name": "Muthoni Maina",
+      "title": "Verified Psychologist",
+      "bio": "Muthoni offers a calm, person-centered space for adults navigating stress, relationship concerns, emotional wellbeing, and life transitions. Her approach is compassionate, practical, and paced around each persons goals.",
+      "years_experience": 5,
+      "languages": [
+        "English",
+        "Kiswahili"
+      ],
+      "areas_of_practice": [
+        "Individual Therapy",
+        "Stress Management",
+        "Relationship Support",
+        "Life Transitions"
+      ],
+      "profile_photo_url": "/images/therapists/muthoni.jpg",
+      "verification_status": "VERIFIED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Verified psychologist profile approved for public directory on 2026-10-02.",
+      "created_at": "2026-09-28T07:48:03.983Z",
+      "updated_at": "2026-10-02T19:26:07.1896268Z"
+    },
+    {
+      "id": "thp_cyrus_musyoki",
+      "user_id": null,
+      "full_name": "Cyrus Mbatha Musyoki",
+      "title": "Verified Psychologist",
+      "bio": "Cyrus provides grounded psychological support for adults and young people working through anxiety, stress, emotional resilience, and meaningful life change. He brings a warm, collaborative approach to each session.",
+      "years_experience": 5,
+      "languages": [
+        "English",
+        "Kiswahili"
+      ],
+      "areas_of_practice": [
+        "Anxiety Support",
+        "Stress Management",
+        "Emotional Resilience",
+        "Youth Wellbeing"
+      ],
+      "profile_photo_url": "/images/therapists/cyrus.jpg",
+      "verification_status": "VERIFIED",
+      "is_active": true,
+      "supports_online": true,
+      "supports_in_person": true,
+      "session_rate_override": null,
+      "internal_admin_notes": "Verified psychologist profile approved for public directory on 2026-10-02.",
+      "created_at": "2026-09-30T00:00:00Z",
+      "updated_at": "2026-10-02T19:26:07.2047597Z"
+    },
+    {
+      "id": "thp_onboarding_01",
+      "user_id": null,
+      "full_name": "New Practitioner 01",
+      "title": "Profile In Progress",
+      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
+      "years_experience": 0,
+      "languages": [],
+      "areas_of_practice": [],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
+      "created_at": "2026-10-02T18:43:36.865Z",
+      "updated_at": "2026-10-02T18:43:36.865Z"
+    },
+    {
+      "id": "thp_onboarding_02",
+      "user_id": null,
+      "full_name": "New Practitioner 02",
+      "title": "Profile In Progress",
+      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
+      "years_experience": 0,
+      "languages": [],
+      "areas_of_practice": [],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
+      "created_at": "2026-10-02T18:43:36.865Z",
+      "updated_at": "2026-10-02T18:43:36.865Z"
+    },
+    {
+      "id": "thp_onboarding_03",
+      "user_id": null,
+      "full_name": "New Practitioner 03",
+      "title": "Profile In Progress",
+      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
+      "years_experience": 0,
+      "languages": [],
+      "areas_of_practice": [],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
+      "created_at": "2026-10-02T18:43:36.865Z",
+      "updated_at": "2026-10-02T18:43:36.865Z"
+    }
+  ],
+  "therapist_credentials": [
+    {
+      "id": "crd_magdalene_1",
+      "therapist_id": "thp_magdalene_mwende",
+      "document_type": "Practicing License in Psychological Counselling",
+      "issuing_authority": "Kenya Counselling and Psychological Association (KCPA)",
+      "verification_number": "KCPA/2021/4891",
+      "issue_date": "2021-03-15",
+      "expiry_date": "2027-03-14",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-10T09:00:00Z",
+      "verified_by": "usr_super_admin_1"
+    },
+    {
+      "id": "crd_magdalene_2",
+      "therapist_id": "thp_magdalene_mwende",
+      "document_type": "Clinical Trauma & Grief Specialist Certificate",
+      "issuing_authority": "Board of Mental Health Practitioners Kenya",
+      "verification_number": "BMHP-KE-7822",
+      "issue_date": "2022-06-20",
+      "expiry_date": "2028-06-19",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-10T09:00:00Z",
+      "verified_by": "usr_super_admin_1"
+    },
+    {
+      "id": "crd_chuot_1",
+      "therapist_id": "thp_chuot_magok",
+      "document_type": "Professional Counselling License",
+      "issuing_authority": "Kenya Counselling and Psychological Association (KCPA)",
+      "verification_number": "KCPA/2020/3319",
+      "issue_date": "2020-08-10",
+      "expiry_date": "2027-08-09",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-12T11:00:00Z",
+      "verified_by": "usr_super_admin_1"
+    },
+    {
+      "id": "crd_ikwa_1",
+      "therapist_id": "thp_ikwa_bawoso",
+      "document_type": "Licensed Clinical Counsellor",
+      "issuing_authority": "Kenya Counselling and Psychological Association (KCPA)",
+      "verification_number": "KCPA/2019/2180",
+      "issue_date": "2019-05-18",
+      "expiry_date": "2027-05-17",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-12T11:00:00Z",
+      "verified_by": "usr_super_admin_1"
+    },
+    {
+      "id": "crd_caroline_1",
+      "therapist_id": "thp_caroline_nyaguthii",
+      "document_type": "Child & Adolescent Mental Health Certification",
+      "issuing_authority": "Kenya Counselling and Psychological Association (KCPA)",
+      "verification_number": "KCPA/2018/1944",
+      "issue_date": "2018-09-25",
+      "expiry_date": "2027-09-24",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-14T10:00:00Z",
+      "verified_by": "usr_super_admin_1"
+    },
+    {
+      "id": "crd_jeremiah_1",
+      "therapist_id": "thp_jeremiah_parseketo",
+      "document_type": "Practicing License in Counselling Psychology",
+      "issuing_authority": "Kenya Counselling and Psychological Association (KCPA)",
+      "verification_number": "KCPA/2021/5023",
+      "issue_date": "2021-02-14",
+      "expiry_date": "2027-02-13",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-14T10:00:00Z",
+      "verified_by": "usr_super_admin_1"
+    },
+    {
+      "id": "crd_joyce_1",
+      "therapist_id": "thp_joyce_wothaya",
+      "document_type": "Certified Family & Psychological Counsellor",
+      "issuing_authority": "Kenya Counselling and Psychological Association (KCPA)",
+      "verification_number": "KCPA/2017/1410",
+      "issue_date": "2017-11-05",
+      "expiry_date": "2027-11-04",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-15T09:30:00Z",
+      "verified_by": "usr_super_admin_1"
+    },
+    {
+      "id": "crd_patrick_1",
+      "therapist_id": "thp_patrick_rinye",
+      "document_type": "Licensed Psychological Counsellor",
+      "issuing_authority": "Kenya Counselling and Psychological Association (KCPA)",
+      "verification_number": "KCPA/2019/2877",
+      "issue_date": "2019-04-12",
+      "expiry_date": "2027-04-11",
+      "status": "VERIFIED",
+      "file_url": null,
+      "verified_at": "2026-01-15T09:30:00Z",
+      "verified_by": "usr_super_admin_1"
+    }
+  ],
+  "service_categories": [
+    {
+      "id": "cat_individual",
+      "name": "Individual Therapy",
+      "slug": "individual-therapy",
+      "description": "One-on-one personalized psychological support",
+      "display_order": 1,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "cat_couples",
+      "name": "Couples & Family",
+      "slug": "couples-family",
+      "description": "Relational healing and constructive dialogue",
+      "display_order": 2,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "cat_youth",
+      "name": "Youth & Adolescents",
+      "slug": "youth-adolescents",
+      "description": "Compassionate guidance for young people",
+      "display_order": 3,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "cat_workplace",
+      "name": "Workplace & Stress",
+      "slug": "workplace-stress",
+      "description": "Burnout recovery and career resilience",
+      "display_order": 4,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    }
+  ],
+  "services": [
+    {
+      "id": "srv_individual_intake",
+      "category_id": "cat_individual",
+      "name": "Individual Counselling",
+      "slug": "individual-therapy-intake",
+      "description": "A grounded, non-judgmental space to explore emotional challenges, anxiety, depression, or life transitions. Guiding adults to overcome challenges & live fulfilling lives.",
+      "duration_minutes": 55,
+      "price": 1500,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "Please find a quiet, private space where you feel comfortable speaking freely.",
+      "min_age": 18,
+      "max_age": null,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-15T06:54:29.353Z"
+    },
+    {
+      "id": "srv_kids_counselling",
+      "category_id": "cat_youth",
+      "name": "Kids Emotional Wellness Counselling",
+      "slug": "kids-emotional-wellness-counselling",
+      "description": "Helping children express, understand & manage their emotions through play, gentle communication, and emotional coping tools.",
+      "duration_minutes": 45,
+      "price": 1500,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "Includes initial guardian check-in and child-friendly supportive emotional exploration.",
+      "min_age": 6,
+      "max_age": 12,
+      "created_at": "2026-09-15T06:54:29.353Z",
+      "updated_at": "2026-09-15T06:54:29.353Z"
+    },
+    {
+      "id": "srv_adolescent_support",
+      "category_id": "cat_youth",
+      "name": "Teen & Adolescent Counselling",
+      "slug": "teen-adolescent-counselling",
+      "description": "Supporting teens through life challenges, identity & confidence, peer pressure, academic anxiety, and family dynamics.",
+      "duration_minutes": 50,
+      "price": 1500,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "Confidential adolescent therapy with initial guardian alignment.",
+      "min_age": 13,
+      "max_age": 17,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-15T06:54:29.353Z"
+    },
+    {
+      "id": "srv_stress_burnout",
+      "category_id": "cat_workplace",
+      "name": "Anxiety, Stress & Burnout Management",
+      "slug": "stress-burnout-recovery",
+      "description": "Targeted psychological intervention for anxiety, chronic exhaustion, career pressure, boundary erosion, or work fatigue.",
+      "duration_minutes": 50,
+      "price": 1500,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "Focuses on nervous system regulation, cognitive realignment, and boundary restoration.",
+      "min_age": 18,
+      "max_age": null,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-15T06:54:29.353Z"
+    },
+    {
+      "id": "srv_couples_counselling",
+      "category_id": "cat_couples",
+      "name": "Couples & Relationship Counselling",
+      "slug": "couples-relationship-counselling",
+      "description": "Facilitated sessions designed to rebuild emotional intimacy, resolve recurrent conflicts, and enhance mutual understanding.",
+      "duration_minutes": 60,
+      "price": 2000,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "Both partners should attend from a shared room or joint video link.",
+      "min_age": 18,
+      "max_age": null,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-15T06:54:29.353Z"
+    },
+    {
+      "id": "srv_grief_bereavement",
+      "category_id": "cat_individual",
+      "name": "Emotional Healing, Grief & Transitions",
+      "slug": "grief-bereavement-support",
+      "description": "Gentle, patient companionship through significant loss, bereavement, self-esteem challenges, and profound life transitions.",
+      "duration_minutes": 50,
+      "price": 1500,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "There is no agenda to rush your healing; sessions move at your organic pace.",
+      "min_age": 18,
+      "max_age": null,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-15T06:54:29.353Z"
+    },
+    {
+      "id": "srv_family_counselling",
+      "category_id": "cat_couples",
+      "name": "Family Counselling",
+      "slug": "family-counselling",
+      "description": "A supported space for families to work through communication, relationships, and shared emotional wellbeing.",
+      "duration_minutes": 60,
+      "price": 2000,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "The care team will confirm the best session format for everyone attending.",
+      "min_age": 0,
+      "max_age": null,
+      "created_at": "2026-09-30T00:00:00Z",
+      "updated_at": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "srv_executive_counselling",
+      "category_id": "cat_workplace",
+      "name": "Executive & Professional Counselling",
+      "slug": "executive-professional-counselling",
+      "description": "Confidential support for professionals navigating leadership pressure, stress, transitions, and wellbeing.",
+      "duration_minutes": 60,
+      "price": 3000,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "The care team will confirm practitioner availability and session arrangements.",
+      "min_age": 18,
+      "max_age": null,
+      "created_at": "2026-09-30T00:00:00Z",
+      "updated_at": "2026-09-30T05:12:38.716Z"
+    },
+    {
+      "id": "srv_priority_support",
+      "category_id": "cat_individual",
+      "name": "Priority Support",
+      "slug": "priority-support",
+      "description": "Priority access to Be Sawa's care team for timely, non-emergency support and scheduling.",
+      "duration_minutes": 60,
+      "price": 8000,
+      "currency": "KES",
+      "delivery_mode": "BOTH",
+      "is_active": true,
+      "booking_instructions": "Priority Support is not a 24/7 emergency service. The care team will confirm availability.",
+      "min_age": 18,
+      "max_age": null,
+      "created_at": "2026-09-30T00:00:00Z",
+      "updated_at": "2026-09-30T00:00:00Z"
+    }
+  ],
+  "therapist_services": [
+    {
+      "therapist_id": "thp_magdalene_mwende",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_magdalene_mwende",
+      "service_id": "srv_stress_burnout"
+    },
+    {
+      "therapist_id": "thp_magdalene_mwende",
+      "service_id": "srv_grief_bereavement"
+    },
+    {
+      "therapist_id": "thp_chuot_magok",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_chuot_magok",
+      "service_id": "srv_adolescent_support"
+    },
+    {
+      "therapist_id": "thp_chuot_magok",
+      "service_id": "srv_stress_burnout"
+    },
+    {
+      "therapist_id": "thp_ikwa_bawoso",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_ikwa_bawoso",
+      "service_id": "srv_stress_burnout"
+    },
+    {
+      "therapist_id": "thp_ikwa_bawoso",
+      "service_id": "srv_grief_bereavement"
+    },
+    {
+      "therapist_id": "thp_caroline_nyaguthii",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_caroline_nyaguthii",
+      "service_id": "srv_kids_counselling"
+    },
+    {
+      "therapist_id": "thp_caroline_nyaguthii",
+      "service_id": "srv_stress_burnout"
+    },
+    {
+      "therapist_id": "thp_caroline_nyaguthii",
+      "service_id": "srv_grief_bereavement"
+    },
+    {
+      "therapist_id": "thp_jeremiah_parseketo",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_jeremiah_parseketo",
+      "service_id": "srv_adolescent_support"
+    },
+    {
+      "therapist_id": "thp_jeremiah_parseketo",
+      "service_id": "srv_stress_burnout"
+    },
+    {
+      "therapist_id": "thp_jeremiah_parseketo",
+      "service_id": "srv_grief_bereavement"
+    },
+    {
+      "therapist_id": "thp_joyce_wothaya",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_joyce_wothaya",
+      "service_id": "srv_kids_counselling"
+    },
+    {
+      "therapist_id": "thp_joyce_wothaya",
+      "service_id": "srv_adolescent_support"
+    },
+    {
+      "therapist_id": "thp_joyce_wothaya",
+      "service_id": "srv_grief_bereavement"
+    },
+    {
+      "therapist_id": "thp_patrick_rinye",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_patrick_rinye",
+      "service_id": "srv_adolescent_support"
+    },
+    {
+      "therapist_id": "thp_patrick_rinye",
+      "service_id": "srv_grief_bereavement"
+    },
+    {
+      "therapist_id": "thp_patrick_rinye",
+      "service_id": "srv_stress_burnout"
+    },
+    {
+      "therapist_id": "thp_muthoni_maina",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_muthoni_maina",
+      "service_id": "srv_stress_burnout"
+    },
+    {
+      "therapist_id": "thp_cyrus_musyoki",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "therapist_id": "thp_cyrus_musyoki",
+      "service_id": "srv_stress_burnout"
+    }
+  ],
+  "packages": [
+    {
+      "id": "pkg_healing_foundations",
+      "name": "Be Sawa 4",
+      "slug": "be-sawa-4",
+      "description": "Four individual counselling sessions to support continuity in your care journey.",
+      "number_of_sessions": 4,
+      "price": 6000,
+      "currency": "KES",
+      "validity_days": 60,
+      "is_active": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "pkg_restorative_journey",
+      "name": "Be Sawa 8",
+      "slug": "be-sawa-8",
+      "description": "Eight individual counselling sessions for sustained continuity of care.",
+      "number_of_sessions": 8,
+      "price": 10500,
+      "currency": "KES",
+      "validity_days": 120,
+      "is_active": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "pkg_couples_harmony",
+      "name": "Be Sawa Couples Journey",
+      "slug": "be-sawa-couples-journey",
+      "description": "Four couples counselling sessions to support healthier connection and communication.",
+      "number_of_sessions": 4,
+      "price": 11000,
+      "currency": "KES",
+      "validity_days": 60,
+      "is_active": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "pkg_be_sawa_professional",
+      "name": "Be Sawa Professional",
+      "slug": "be-sawa-professional",
+      "description": "Four executive and professional counselling sessions.",
+      "number_of_sessions": 4,
+      "price": 10000,
+      "currency": "KES",
+      "validity_days": 60,
+      "is_active": true,
+      "created_at": "2026-09-30T00:00:00Z"
+    },
+    {
+      "id": "pkg_be_sawa_priority_4",
+      "name": "Be Sawa Priority 4",
+      "slug": "be-sawa-priority-4",
+      "description": "Four Priority Support sessions, subject to care-team availability and confirmation.",
+      "number_of_sessions": 4,
+      "price": 32000,
+      "currency": "KES",
+      "validity_days": 60,
+      "is_active": true,
+      "created_at": "2026-09-30T00:00:00Z"
+    }
+  ],
+  "package_services": [
+    {
+      "package_id": "pkg_healing_foundations",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "package_id": "pkg_restorative_journey",
+      "service_id": "srv_individual_intake"
+    },
+    {
+      "package_id": "pkg_couples_harmony",
+      "service_id": "srv_couples_counselling"
+    }
+  ],
+  "availability_rules": [
+    {
+      "id": "avr_thp_magdalene_mwende_monday",
+      "therapist_id": "thp_magdalene_mwende",
+      "day_of_week": "Monday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_magdalene_mwende_tuesday",
+      "therapist_id": "thp_magdalene_mwende",
+      "day_of_week": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_magdalene_mwende_wednesday",
+      "therapist_id": "thp_magdalene_mwende",
+      "day_of_week": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_magdalene_mwende_thursday",
+      "therapist_id": "thp_magdalene_mwende",
+      "day_of_week": "Thursday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_magdalene_mwende_friday",
+      "therapist_id": "thp_magdalene_mwende",
+      "day_of_week": "Friday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_chuot_magok_monday",
+      "therapist_id": "thp_chuot_magok",
+      "day_of_week": "Monday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_chuot_magok_tuesday",
+      "therapist_id": "thp_chuot_magok",
+      "day_of_week": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_chuot_magok_wednesday",
+      "therapist_id": "thp_chuot_magok",
+      "day_of_week": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_chuot_magok_thursday",
+      "therapist_id": "thp_chuot_magok",
+      "day_of_week": "Thursday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_chuot_magok_friday",
+      "therapist_id": "thp_chuot_magok",
+      "day_of_week": "Friday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_ikwa_bawoso_monday",
+      "therapist_id": "thp_ikwa_bawoso",
+      "day_of_week": "Monday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_ikwa_bawoso_tuesday",
+      "therapist_id": "thp_ikwa_bawoso",
+      "day_of_week": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_ikwa_bawoso_wednesday",
+      "therapist_id": "thp_ikwa_bawoso",
+      "day_of_week": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_ikwa_bawoso_thursday",
+      "therapist_id": "thp_ikwa_bawoso",
+      "day_of_week": "Thursday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_ikwa_bawoso_friday",
+      "therapist_id": "thp_ikwa_bawoso",
+      "day_of_week": "Friday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_caroline_nyaguthii_monday",
+      "therapist_id": "thp_caroline_nyaguthii",
+      "day_of_week": "Monday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_caroline_nyaguthii_tuesday",
+      "therapist_id": "thp_caroline_nyaguthii",
+      "day_of_week": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_caroline_nyaguthii_wednesday",
+      "therapist_id": "thp_caroline_nyaguthii",
+      "day_of_week": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_caroline_nyaguthii_thursday",
+      "therapist_id": "thp_caroline_nyaguthii",
+      "day_of_week": "Thursday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_caroline_nyaguthii_friday",
+      "therapist_id": "thp_caroline_nyaguthii",
+      "day_of_week": "Friday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_jeremiah_parseketo_monday",
+      "therapist_id": "thp_jeremiah_parseketo",
+      "day_of_week": "Monday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_jeremiah_parseketo_tuesday",
+      "therapist_id": "thp_jeremiah_parseketo",
+      "day_of_week": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_jeremiah_parseketo_wednesday",
+      "therapist_id": "thp_jeremiah_parseketo",
+      "day_of_week": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_jeremiah_parseketo_thursday",
+      "therapist_id": "thp_jeremiah_parseketo",
+      "day_of_week": "Thursday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_jeremiah_parseketo_friday",
+      "therapist_id": "thp_jeremiah_parseketo",
+      "day_of_week": "Friday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_joyce_wothaya_tuesday",
+      "therapist_id": "thp_joyce_wothaya",
+      "day_of_week": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_joyce_wothaya_wednesday",
+      "therapist_id": "thp_joyce_wothaya",
+      "day_of_week": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_joyce_wothaya_thursday",
+      "therapist_id": "thp_joyce_wothaya",
+      "day_of_week": "Thursday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_joyce_wothaya_friday",
+      "therapist_id": "thp_joyce_wothaya",
+      "day_of_week": "Friday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_joyce_wothaya_saturday",
+      "therapist_id": "thp_joyce_wothaya",
+      "day_of_week": "Saturday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_patrick_rinye_monday",
+      "therapist_id": "thp_patrick_rinye",
+      "day_of_week": "Monday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_patrick_rinye_tuesday",
+      "therapist_id": "thp_patrick_rinye",
+      "day_of_week": "Tuesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_patrick_rinye_wednesday",
+      "therapist_id": "thp_patrick_rinye",
+      "day_of_week": "Wednesday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_patrick_rinye_thursday",
+      "therapist_id": "thp_patrick_rinye",
+      "day_of_week": "Thursday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    },
+    {
+      "id": "avr_thp_patrick_rinye_friday",
+      "therapist_id": "thp_patrick_rinye",
+      "day_of_week": "Friday",
+      "start_time": "09:00",
+      "end_time": "17:00",
+      "slot_duration_minutes": 50,
+      "break_duration_minutes": 10,
+      "is_active": true
+    }
+  ],
+  "availability_exceptions": [],
+  "bookings": [
+    {
+      "id": "bk_sample_01",
+      "booking_reference": "BS-20491",
+      "service_id": "srv_individual_intake",
+      "therapist_id": "thp_chuot_magok",
+      "date": "2026-09-15",
+      "time": "11:00",
+      "duration_minutes": 50,
+      "amount": 3500,
+      "currency": "KES",
+      "delivery_mode": "ONLINE",
+      "client_name": "Faith Chebet",
+      "client_phone": "0722123456",
+      "client_email": "faith.chebet@example.com",
+      "client_notes": "Looking forward to our intake session.",
+      "status": "CONFIRMED",
+      "cancellation_reason": null,
+      "cancelled_at": null,
+      "completed_at": null,
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-14T07:07:36.195Z",
+      "therapist_name": "Chuot Magok",
+      "therapist_title": "Psychological Counsellor"
+    },
+    {
+      "id": "bk_1789672387187",
+      "booking_reference": "BS-68975",
+      "service_id": "srv_grief_bereavement",
+      "therapist_id": "thp_magdalene_mwende",
+      "date": "2026-09-18",
+      "time": "15:30",
+      "duration_minutes": 50,
+      "amount": 1500,
+      "currency": "KES",
+      "delivery_mode": "ONLINE",
+      "client_name": "Stephen Kimaru",
+      "client_phone": "0798691594",
+      "client_email": "macreatives.global@gmail.com",
+      "client_notes": "Managing workplace anxiety",
+      "status": "COMPLETED",
+      "cancellation_reason": null,
+      "cancelled_at": null,
+      "completed_at": "2026-09-30T05:11:41.75Z",
+      "created_at": "2026-09-17T19:13:07.187Z",
+      "updated_at": "2026-09-30T05:11:41.75Z",
+      "therapist_name": "Magdalene Mwende Kimanzi",
+      "therapist_title": "Psychological Counsellor"
+    },
+    {
+      "id": "bk_1790582016675",
+      "booking_reference": "BS-49298",
+      "service_id": "srv_individual_intake",
+      "therapist_id": "thp_magdalene_mwende",
+      "date": "2026-10-01",
+      "time": "10:00",
+      "duration_minutes": 50,
+      "amount": 1500,
+      "currency": "KES",
+      "delivery_mode": "ONLINE",
+      "client_name": "Wairimu Kamau",
+      "client_phone": "0722123456",
+      "client_email": "wairimu@example.com",
+      "client_notes": "Seeking support for workplace anxiety and life transitions.",
+      "status": "PENDING_PAYMENT",
+      "cancellation_reason": null,
+      "cancelled_at": null,
+      "completed_at": null,
+      "created_at": "2026-09-28T07:53:36.675Z",
+      "updated_at": "2026-09-28T07:53:36.675Z"
+    }
+  ],
+  "payments": [
+    {
+      "id": "pay_sample_01",
+      "booking_id": "bk_sample_01",
+      "amount": 3500,
+      "currency": "KES",
+      "provider": "MPESA",
+      "provider_reference": "QA8921KL90",
+      "internal_reference": "PAY-BS-20491",
+      "status": "CONFIRMED",
+      "phone_number": "0722123456",
+      "failure_reason": null,
+      "raw_metadata": {
+        "mpesaReceiptNumber": "QA8921KL90",
+        "resultCode": 0
+      },
+      "initiated_at": "2026-09-14T07:07:36.195Z",
+      "completed_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "pay_1789672392248_ncj3",
+      "booking_id": "bk_1789672387187",
+      "amount": 1500,
+      "currency": "KES",
+      "provider": "MPESA",
+      "provider_reference": "MP-AQ5J3W5",
+      "internal_reference": "PAY-BS-68975",
+      "status": "CONFIRMED",
+      "phone_number": "254798691594",
+      "failure_reason": null,
+      "raw_metadata": {
+        "initiatedVia": "DARAJA_SANDBOX_ADAPTER",
+        "verifiedBy": "sandbox_explicit_verification",
+        "confirmedAt": "2026-09-17T19:13:19.301Z"
+      },
+      "initiated_at": "2026-09-17T19:13:12.248Z",
+      "completed_at": "2026-09-17T19:13:19.301Z"
+    }
+  ],
+  "settlements": [
+    {
+      "id": "stl_sample_01",
+      "booking_id": "bk_sample_01",
+      "therapist_id": "thp_chuot_magok",
+      "gross_session_amount": 3500,
+      "platform_commission_percent": 20,
+      "platform_commission_amount": 700,
+      "therapist_payable_amount": 2800,
+      "adjustments": 0,
+      "settlement_status": "PENDING",
+      "settlement_period": "2026-09",
+      "paid_at": null,
+      "payout_reference": null,
+      "admin_notes": "Initial confirmed booking ready for post-session reconciliation.",
+      "created_at": "2026-09-14T07:07:36.195Z",
+      "updated_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "stl_1789672399301_n9q6",
+      "booking_id": "bk_1789672387187",
+      "therapist_id": "thp_magdalene_mwende",
+      "gross_session_amount": 1500,
+      "platform_commission_percent": 20,
+      "platform_commission_amount": 300,
+      "therapist_payable_amount": 1200,
+      "adjustments": 0,
+      "settlement_status": "APPROVED",
+      "settlement_period": "2026-09",
+      "paid_at": null,
+      "payout_reference": null,
+      "admin_notes": "Auto-generated upon verified payment confirmation. Verified by sandbox_explicit_verification.",
+      "created_at": "2026-09-17T19:13:19.301Z",
+      "updated_at": "2026-09-30T05:11:41.75Z"
+    }
+  ],
+  "audit_logs": [
+    {
+      "id": "aud_1790921594187_ox1ba",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-02T06:13:14.187Z"
+    },
+    {
+      "id": "aud_1790745948728_r96j2",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGOUT",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {},
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-30T05:25:48.728Z"
+    },
+    {
+      "id": "aud_1790745158720_lqo5p",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "SERVICE_UPDATED",
+      "entity_type": "SERVICE",
+      "entity_id": "srv_executive_counselling",
+      "details": {
+        "name": "Executive & Professional Counselling",
+        "category_id": "cat_workplace",
+        "description": "Confidential support for professionals navigating leadership pressure, stress, transitions, and wellbeing.",
+        "duration_minutes": 60,
+        "price": 3000,
+        "delivery_mode": "BOTH",
+        "booking_instructions": "The care team will confirm practitioner availability and session arrangements."
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-30T05:12:38.72Z"
+    },
+    {
+      "id": "aud_1790745101753_98dnh",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "BOOKING_STATUS_CHANGED",
+      "entity_type": "BOOKING",
+      "entity_id": "bk_1789672387187",
+      "details": {
+        "status": "COMPLETED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-30T05:11:41.753Z"
+    },
+    {
+      "id": "aud_1790744918042_ijl4i",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN",
+          "BUSINESS_OWNER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-30T05:08:38.042Z"
+    },
+    {
+      "id": "aud_1790744670625_password_reset",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "ADMIN_PASSWORD_RESET_LOCAL",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "source": "local maintenance command"
+      },
+      "ip_address": "local-maintenance",
+      "created_at": "2026-09-30T05:04:30.625Z"
+    },
+    {
+      "id": "aud_1790743721867_s78qj",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-30T04:48:41.867Z"
+    },
+    {
+      "id": "aud_1790743671450_ctlo0",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-30T04:47:51.45Z"
+    },
+    {
+      "id": "aud_1790743442325_80lkm",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-30T04:44:02.325Z"
+    },
+    {
+      "id": "aud_1790657838653_glj5b",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "roles": [
+          "PLATFORM_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:57:18.653Z"
+    },
+    {
+      "id": "aud_1790655449047_u8vfi",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "USER_LOGOUT",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {},
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:17:29.047Z"
+    },
+    {
+      "id": "aud_1790655397626_u6n9r",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_joyce_wothaya",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:16:37.626Z"
+    },
+    {
+      "id": "aud_1790655389634_bjziv",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_jeremiah_parseketo",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:16:29.634Z"
+    },
+    {
+      "id": "aud_1790655381519_eez3h",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_caroline_nyaguthii",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:16:21.519Z"
+    },
+    {
+      "id": "aud_1790655373607_662jd",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_ikwa_bawoso",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:16:13.607Z"
+    },
+    {
+      "id": "aud_1790655367634_7q3sv",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_chuot_magok",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:16:07.634Z"
+    },
+    {
+      "id": "aud_1790655360374_t5rkl",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_magdalene_mwende",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:16:00.375Z"
+    },
+    {
+      "id": "aud_1790655355969_8r3jr",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_patrick_rinye",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:15:55.97Z"
+    },
+    {
+      "id": "aud_1790655298307_el1ie",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "THERAPIST_VERIFICATION_UPDATED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_muthoni_maina",
+      "details": {
+        "verification_status": "VERIFIED"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:14:58.307Z"
+    },
+    {
+      "id": "aud_1790655218819_p5wme",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "roles": [
+          "PLATFORM_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:13:38.819Z"
+    },
+    {
+      "id": "aud_1790654883673_giu00",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-29T04:08:03.673Z"
+    },
+    {
+      "id": "aud_1790582016675_xkw31",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "BOOKING_CREATED",
+      "entity_type": "BOOKING",
+      "entity_id": "bk_1790582016675",
+      "details": {
+        "reference": "BS-49298",
+        "therapist": "Magdalene Mwende Kimanzi",
+        "service": "Individual Adult Therapy & Intake",
+        "amount": 1500
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-28T07:53:36.676Z"
+    },
+    {
+      "id": "aud_1790581935286_kojj3",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "roles": [
+          "PLATFORM_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-28T07:52:15.286Z"
+    },
+    {
+      "id": "aud_1790581927333_4a2rc",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "roles": [
+          "PLATFORM_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-28T07:52:07.333Z"
+    },
+    {
+      "id": "aud_1790581923562_bj7u8",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-28T07:52:03.562Z"
+    },
+    {
+      "id": "aud_1790579979598_u31zf",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "roles": [
+          "PLATFORM_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-28T07:19:39.598Z"
+    },
+    {
+      "id": "aud_1790579538284_p9kbe",
+      "user_id": "usr_platform_admin_stephen",
+      "user_email": "macreatives.global@gmail.com",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "roles": [
+          "PLATFORM_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-28T07:12:18.284Z"
+    },
+    {
+      "id": "aud_1789673589637_sq3xm",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-17T19:33:09.637Z"
+    },
+    {
+      "id": "aud_1789673464510_uit3b",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-17T19:31:04.51Z"
+    },
+    {
+      "id": "aud_1789672975287_1epfu",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-17T19:22:55.287Z"
+    },
+    {
+      "id": "aud_1789672399302_6vzg2",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "PAYMENT_CONFIRMED",
+      "entity_type": "BOOKING",
+      "entity_id": "bk_1789672387187",
+      "details": {
+        "providerReference": "MP-AQ5J3W5",
+        "verifiedBy": "sandbox_explicit_verification",
+        "amount": 1500,
+        "settlementGenerated": "stl_1789672399301_n9q6"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-17T19:13:19.302Z"
+    },
+    {
+      "id": "aud_1789672392248_muftj",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "PAYMENT_INITIATED",
+      "entity_type": "PAYMENT",
+      "entity_id": "pay_1789672392248_ncj3",
+      "details": {
+        "bookingId": "bk_1789672387187",
+        "amount": 1500,
+        "phone": "254798691594",
+        "hasDarajaCredentials": false
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-17T19:13:12.248Z"
+    },
+    {
+      "id": "aud_1789672387188_tmpkp",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "BOOKING_CREATED",
+      "entity_type": "BOOKING",
+      "entity_id": "bk_1789672387187",
+      "details": {
+        "reference": "BS-68975",
+        "therapist": "Helen Maina",
+        "service": "Emotional Healing, Grief & Transitions",
+        "amount": 1500
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-17T19:13:07.188Z"
+    },
+    {
+      "id": "aud_1789455269354_o9bq3",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-15T06:54:29.354Z"
+    },
+    {
+      "id": "aud_1789455266871_rhcnk",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-15T06:54:26.871Z"
+    },
+    {
+      "id": "aud_1789369698631_008mj",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-14T07:08:18.631Z"
+    },
+    {
+      "id": "aud_1789369694673_sqk85",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-14T07:08:14.673Z"
+    },
+    {
+      "id": "aud_bootstrap_1",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "SYSTEM_BOOTSTRAP",
+      "entity_type": "SYSTEM",
+      "entity_id": "core_bootstrap",
+      "details": {
+        "message": "Initialized Be Sawa Phase 1 database with verified practitioners and services."
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-09-14T07:07:36.195Z"
+    }
+  ],
+  "business_settings": {
+    "brand_name": "BE SAWA",
+    "descriptor": "Mental Wellness & Counselling",
+    "primary_market": "Nairobi, Kenya",
+    "contact_phones": [
+      "0710759422",
+      "0745024278"
+    ],
+    "whatsapp_number": "0710759422",
+    "contact_email": "care@besawa.ke",
+    "location": "Kilimani, Nairobi, Kenya",
+    "working_model": "Scheduled appointments (In-person & Telehealth)",
+    "emergency_helpline_kenya": "1199 / 116 (Toll-Free Crisis Line)",
+    "platform_commission_percent": 20,
+    "currency": "KES",
+    "mpesa_till_number": "174379"
+  },
+  "faqs": [
+    {
+      "id": "faq_1",
+      "question": "What happens in the very first therapy session?",
+      "answer": "Your first session is primarily an intake conversation. Your therapist will listen attentively to what brought you to therapy, answer any questions you have, clarify confidentiality guidelines, and collaboratively shape your care goals. You are never pushed to share anything before you feel ready.",
+      "category": "Getting Started",
+      "display_order": 1,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "faq_2",
+      "question": "Is therapy with Be Sawa confidential?",
+      "answer": "Yes, completely. All sessions and client communication are strictly confidential, governed by national psychological practice ethics and data protection standards. We never disclose your identity or discussion content to third parties, employers, or family members without your explicit written consent.",
+      "category": "Confidentiality",
+      "display_order": 2,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "faq_3",
+      "question": "Are sessions conducted online or in-person in Nairobi?",
+      "answer": "We offer both. You can attend in-person at our calm, private consulting rooms in Nairobi, or opt for end-to-end encrypted video telehealth sessions from the comfort of your private space anywhere in Kenya and internationally.",
+      "category": "Delivery Modes",
+      "display_order": 3,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "faq_4",
+      "question": "How do payments and M-Pesa work?",
+      "answer": "You can pay securely via Safaricom M-Pesa STK push or our verified Paybill/Till. Once you enter your phone number during booking, an instant M-Pesa prompt appears on your handset. Your booking is verified by our automated server callback instantly.",
+      "category": "Payment",
+      "display_order": 4,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "faq_5",
+      "question": "What if I am experiencing an acute psychiatric emergency?",
+      "answer": "Be Sawa is a scheduled counselling platform and does not operate as a 24/7 psychiatric emergency crisis hospital. If you or someone you know is in acute danger or experiencing suicidal crisis, please contact the Kenya Red Cross toll-free line at 1199, Childline at 116, or visit the nearest hospital emergency room immediately.",
+      "category": "Emergency",
+      "display_order": 5,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    }
+  ],
+  "testimonials": [
+    {
+      "id": "tst_1",
+      "client_alias": "Sarah K.",
+      "quote": "Finding Be Sawa gave me the space I didn’t know I desperately needed. Having a therapist who understood my cultural context without clinical coldness made all the difference in navigating severe career burnout.",
+      "session_category": "Individual Counselling",
+      "is_verified": true,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "tst_2",
+      "client_alias": "David & Maureen",
+      "quote": "The couples sessions felt like neutral ground where we could finally speak without escalating into defense. The practical communication tools saved our marriage.",
+      "session_category": "Couples Counselling",
+      "is_verified": true,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    },
+    {
+      "id": "tst_3",
+      "client_alias": "Brian M.",
+      "quote": "The online booking process was seamless, private, and discreet. No unnecessary forms or invasive questions—just genuine, compassionate professional care.",
+      "session_category": "Executive Support",
+      "is_verified": true,
+      "is_published": true,
+      "created_at": "2026-09-14T07:07:36.195Z"
+    }
+  ],
+  "contact_messages": []
+}
