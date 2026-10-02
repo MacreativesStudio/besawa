@@ -13,8 +13,12 @@ const JWT_SECRET =
     : 'besawa_local_development_only_secret');
 
 function configuredEmails(name: 'ADMIN_ALLOWED_EMAILS' | 'TECH_ALLOWED_EMAILS'): Set<string> {
+  // ADMIN_EMAIL is the single-admin deployment setting. Keep the explicit
+  // allowlist available for teams, but do not lock out that configured admin
+  // merely because a separate allowlist was omitted on the hosting platform.
+  const fallback = name === 'ADMIN_ALLOWED_EMAILS' ? process.env.ADMIN_EMAIL || '' : '';
   return new Set(
-    (process.env[name] || '')
+    (process.env[name] || fallback)
       .split(',')
       .map((email) => email.trim().toLowerCase())
       .filter(Boolean)

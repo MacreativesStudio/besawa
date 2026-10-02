@@ -117,26 +117,27 @@ class RelationalDatabase {
             const stephenId = 'usr_platform_admin_stephen';
             const technicalAdminPassword = process.env.TECHNICAL_ADMIN_PASSWORD;
             if (process.env.NODE_ENV === 'production' && !technicalAdminPassword) {
-              throw new Error('TECHNICAL_ADMIN_PASSWORD must be set before the technical admin can be provisioned.');
+              console.warn('TECHNICAL_ADMIN_PASSWORD is not set; skipping optional platform-admin provisioning.');
+            } else {
+              const defaultTechHash = bcrypt.hashSync(technicalAdminPassword || 'local-development-password-change-me', 10);
+              this.memoryState.users.push({
+                id: stephenId,
+                email: 'macreatives.global@gmail.com',
+                password_hash: defaultTechHash,
+                full_name: 'Stephen (Ma Creatives)',
+                phone: '0710759422',
+                is_active: true,
+                last_login_at: null,
+                created_at: now,
+                updated_at: now,
+              });
+              this.memoryState.user_roles.push({
+                user_id: stephenId,
+                role_id: 'role_platform_admin',
+                assigned_at: now,
+              });
+              modified = true;
             }
-            const defaultTechHash = bcrypt.hashSync(technicalAdminPassword || 'local-development-password-change-me', 10);
-            this.memoryState.users.push({
-              id: stephenId,
-              email: 'macreatives.global@gmail.com',
-              password_hash: defaultTechHash,
-              full_name: 'Stephen (Ma Creatives)',
-              phone: '0710759422',
-              is_active: true,
-              last_login_at: null,
-              created_at: now,
-              updated_at: now,
-            });
-            this.memoryState.user_roles.push({
-              user_id: stephenId,
-              role_id: 'role_platform_admin',
-              assigned_at: now,
-            });
-            modified = true;
           }
 
           // 4. Seed only missing practitioner records. Existing records are admin-managed
@@ -576,17 +577,69 @@ class RelationalDatabase {
         this.memoryState = initial;
       }
     }
+
+    await this.applyConfiguredAdminCredentials();
+  }
+
+  /**
+   * Lets a managed deployment reset its existing business-admin account from
+   * Render environment variables. This intentionally supports the same
+   * ADMIN_EMAIL / ADMIN_PASSWORD pair used by the maintenance command.
+   */
+  private async applyConfiguredAdminCredentials(): Promise<void> {
+    const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const password = process.env.ADMIN_PASSWORD;
+    if (!email || !password || !this.memoryState) return;
+
+    if (password.length < 12 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+      throw new Error('ADMIN_PASSWORD must use at least 12 characters including uppercase, lowercase, and a number.');
+    }
+
+    const user = this.memoryState.users.find((candidate) => {
+      const candidateEmail = candidate.email?.trim().toLowerCase();
+      return (
+        candidateEmail === email ||
+        (email === 'admin@besawa.co.ke' && candidateEmail === 'admin@besawa.ke') ||
+        (email === 'admin@besawa.ke' && candidateEmail === 'admin@besawa.co.ke')
+      );
+    });
+
+    if (!user) {
+      console.warn(`Configured ADMIN_EMAIL does not match an existing user: ${email}`);
+      return;
+    }
+
+    const roleIds = this.memoryState.user_roles
+      .filter((role) => role.user_id === user.id)
+      .map((role) => role.role_id);
+    const isAdministrator = this.memoryState.roles
+      .filter((role) => roleIds.includes(role.id))
+      .some((role) => ['BUSINESS_OWNER_ADMIN', 'SUPER_ADMIN', 'ADMIN'].includes(role.name));
+
+    if (!isAdministrator) {
+      throw new Error('ADMIN_EMAIL must belong to an existing business administrator account.');
+    }
+
+    if (!(await bcrypt.compare(password, user.password_hash))) {
+      user.password_hash = await bcrypt.hash(password, 12);
+      user.session_version = (user.session_version || 0) + 1;
+      user.updated_at = new Date().toISOString();
+      this.save();
+      console.log(`Configured administrator password synchronized for ${user.email}.`);
+    }
   }
 
   private async generateBootstrapState(): Promise<DatabaseState> {
     const saltRounds = 10;
-    const initialPass = process.env.ADMIN_INITIAL_PASSWORD;
+    const initialPass = process.env.ADMIN_INITIAL_PASSWORD || process.env.ADMIN_PASSWORD;
     const technicalInitialPass = process.env.TECHNICAL_ADMIN_PASSWORD;
-    if (!initialPass || !technicalInitialPass) {
-      throw new Error('ADMIN_INITIAL_PASSWORD and TECHNICAL_ADMIN_PASSWORD are required to initialize a new database.');
+    if (!initialPass) {
+      throw new Error('ADMIN_INITIAL_PASSWORD or ADMIN_PASSWORD is required to initialize a new database.');
     }
     const adminPasswordHash = await bcrypt.hash(initialPass, saltRounds);
-    const techPasswordHash = await bcrypt.hash(technicalInitialPass, saltRounds);
+    const techPasswordHash = technicalInitialPass
+      ? await bcrypt.hash(technicalInitialPass, saltRounds)
+      : null;
 
     const now = new Date().toISOString();
 
@@ -611,7 +664,7 @@ class RelationalDatabase {
         created_at: now,
         updated_at: now,
       },
-      {
+      ...(techPasswordHash ? [{
         id: 'usr_platform_admin_stephen',
         email: 'macreatives.global@gmail.com',
         password_hash: techPasswordHash,
@@ -621,13 +674,13 @@ class RelationalDatabase {
         last_login_at: null,
         created_at: now,
         updated_at: now,
-      },
+      }] : []),
     ];
 
     const user_roles = [
       { user_id: 'usr_super_admin_1', role_id: 'role_business_owner_admin', assigned_at: now },
       { user_id: 'usr_super_admin_1', role_id: 'role_super_admin', assigned_at: now },
-      { user_id: 'usr_platform_admin_stephen', role_id: 'role_platform_admin', assigned_at: now },
+      ...(techPasswordHash ? [{ user_id: 'usr_platform_admin_stephen', role_id: 'role_platform_admin', assigned_at: now }] : []),
     ];
 
     const categories = [
