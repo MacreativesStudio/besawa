@@ -1,0 +1,23 @@
+# Be Sawa robots.txt
+# Allow search engines to crawl the public website.
+
+User-agent: *
+
+# Public website
+Allow: /
+
+# Keep private/system areas out of search-engine crawling
+Disallow: /api/
+Disallow: /admin/
+Disallow: /config/
+Disallow: /coverage/
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /build/
+Disallow: /_next/
+
+# Log files
+Disallow: /*.log$
+
+# XML sitemap
+Sitemap: https://besawa.co.ke/sitemap.xml

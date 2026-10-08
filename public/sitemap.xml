@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Homepage -->
+  <url>
+    <loc>https://besawa.co.ke/</loc>
+  </url>
+
+  <!-- Services -->
+  <url>
+    <loc>https://besawa.co.ke/services</loc>
+  </url>
+
+  <!-- Therapists -->
+  <url>
+    <loc>https://besawa.co.ke/therapists</loc>
+  </url>
+
+  <!-- Packages -->
+  <url>
+    <loc>https://besawa.co.ke/packages</loc>
+  </url>
+
+  <!-- How It Works -->
+  <url>
+    <loc>https://besawa.co.ke/how-it-works</loc>
+  </url>
+
+  <!-- About -->
+  <url>
+    <loc>https://besawa.co.ke/about</loc>
+  </url>
+
+  <!-- FAQs -->
+  <url>
+    <loc>https://besawa.co.ke/faqs</loc>
+  </url>
+
+  <!-- Contact -->
+  <url>
+    <loc>https://besawa.co.ke/contact</loc>
+  </url>
+
+  <!-- Resources -->
+  <url>
+    <loc>https://besawa.co.ke/resources</loc>
+  </url>
+
+  <!-- Founder -->
+  <url>
+    <loc>https://besawa.co.ke/founder</loc>
+  </url>
+
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://besawa.co.ke/privacy</loc>
+  </url>
+
+  <!-- Terms -->
+  <url>
+    <loc>https://besawa.co.ke/terms</loc>
+  </url>
+
+  <!-- Crisis Support -->
+  <url>
+    <loc>https://besawa.co.ke/crisis</loc>
+  </url>
+
+  <!-- Booking -->
+  <url>
+    <loc>https://besawa.co.ke/book</loc>
+  </url>
+
+  <!-- Therapist / Service Lookup -->
+  <url>
+    <loc>https://besawa.co.ke/lookup</loc>
+  </url>
+
+</urlset>
