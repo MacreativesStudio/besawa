@@ -17,25 +17,59 @@ import {
   DollarSign,
   ShieldCheck,
   Calendar,
+  Trash2,
+  HelpCircle,
+  Quote,
+  MessageSquare,
+  Check,
+  AlertTriangle,
+  Mail,
+  Phone,
 } from 'lucide-react';
 import { api } from '../../api';
-import { Service, ServiceCategory, Package } from '../../types';
+import { Service, ServiceCategory, Package, FAQ, Testimonial, ContactMessage } from '../../types';
 import { Button } from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
 
 export const AdminServicesView: React.FC = () => {
   const { showToast } = useToast();
-  const [activeTab, setActiveTab] = useState<'services' | 'packages'>('services');
+  const [activeTab, setActiveTab] = useState<'services' | 'packages' | 'faqs' | 'testimonials' | 'inquiries'>('services');
 
   // Services State
   const [services, setServices] = useState<(Service & { assigned_therapist_count?: number })[]>([]);
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [isLoadingServices, setIsLoadingServices] = useState(true);
   const [serviceSearch, setServiceSearch] = useState('');
+  const [deletingService, setDeletingService] = useState<Service | null>(null);
+  const [isDeletingService, setIsDeletingService] = useState(false);
 
   // Packages State
   const [packages, setPackages] = useState<Package[]>([]);
   const [isLoadingPackages, setIsLoadingPackages] = useState(true);
+  const [deletingPackage, setDeletingPackage] = useState<Package | null>(null);
+  const [isDeletingPackage, setIsDeletingPackage] = useState(false);
+
+  // FAQs State
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [isLoadingFaqs, setIsLoadingFaqs] = useState(false);
+  const [editingFaq, setEditingFaq] = useState<(Partial<FAQ> & { isNew?: boolean }) | null>(null);
+  const [deletingFaq, setDeletingFaq] = useState<FAQ | null>(null);
+  const [isSavingFaq, setIsSavingFaq] = useState(false);
+  const [isDeletingFaq, setIsDeletingFaq] = useState(false);
+
+  // Testimonials State
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [isLoadingTestimonials, setIsLoadingTestimonials] = useState(false);
+  const [editingTestimonial, setEditingTestimonial] = useState<(Partial<Testimonial> & { isNew?: boolean }) | null>(null);
+  const [deletingTestimonial, setDeletingTestimonial] = useState<Testimonial | null>(null);
+  const [isSavingTestimonial, setIsSavingTestimonial] = useState(false);
+  const [isDeletingTestimonial, setIsDeletingTestimonial] = useState(false);
+
+  // Contact Inquiries State
+  const [inquiries, setInquiries] = useState<ContactMessage[]>([]);
+  const [isLoadingInquiries, setIsLoadingInquiries] = useState(false);
+  const [deletingInquiry, setDeletingInquiry] = useState<ContactMessage | null>(null);
+  const [isDeletingInquiry, setIsDeletingInquiry] = useState(false);
 
   // Edit / Add Service Modal
   const [editingService, setEditingService] = useState<(Partial<Service> & { isNew?: boolean }) | null>(null);
@@ -66,10 +100,72 @@ export const AdminServicesView: React.FC = () => {
       .finally(() => setIsLoadingPackages(false));
   };
 
+  const fetchFaqs = () => {
+    setIsLoadingFaqs(true);
+    api
+      .getAdminFaqs()
+      .then((res) => setFaqs(res.faqs))
+      .catch((err) => showToast(err.message || 'Failed loading FAQs.', 'error'))
+      .finally(() => setIsLoadingFaqs(false));
+  };
+
+  const fetchTestimonials = () => {
+    setIsLoadingTestimonials(true);
+    api
+      .getAdminTestimonials()
+      .then((res) => setTestimonials(res.testimonials))
+      .catch((err) => showToast(err.message || 'Failed loading testimonials.', 'error'))
+      .finally(() => setIsLoadingTestimonials(false));
+  };
+
+  const fetchInquiries = () => {
+    setIsLoadingInquiries(true);
+    api
+      .getAdminContactMessages()
+      .then((res) => setInquiries(res.messages))
+      .catch((err) => showToast(err.message || 'Failed loading inquiries.', 'error'))
+      .finally(() => setIsLoadingInquiries(false));
+  };
+
   useEffect(() => {
     fetchServices();
     fetchPackages();
+    fetchFaqs();
+    fetchTestimonials();
+    fetchInquiries();
   }, []);
+
+  // Delete Service
+  const handleDeleteService = async () => {
+    if (!deletingService) return;
+    setIsDeletingService(true);
+    try {
+      await api.deleteService(deletingService.id);
+      showToast(`${deletingService.name} deleted successfully.`, 'success');
+      setServices((prev) => prev.filter((s) => s.id !== deletingService.id));
+      setDeletingService(null);
+    } catch (err: any) {
+      showToast(err.message || 'Failed deleting service.', 'error');
+    } finally {
+      setIsDeletingService(false);
+    }
+  };
+
+  // Delete Package
+  const handleDeletePackage = async () => {
+    if (!deletingPackage) return;
+    setIsDeletingPackage(true);
+    try {
+      await api.deletePackage(deletingPackage.id);
+      showToast(`${deletingPackage.name} deleted successfully.`, 'success');
+      setPackages((prev) => prev.filter((p) => p.id !== deletingPackage.id));
+      setDeletingPackage(null);
+    } catch (err: any) {
+      showToast(err.message || 'Failed deleting package.', 'error');
+    } finally {
+      setIsDeletingPackage(false);
+    }
+  };
 
   // Toggle Service Active Status
   const handleToggleServiceActive = async (service: Service) => {
@@ -96,6 +192,164 @@ export const AdminServicesView: React.FC = () => {
       );
     } catch (err: any) {
       showToast(err.message || 'Failed updating package status.', 'error');
+    }
+  };
+
+  // Save FAQ (Create or Update)
+  const handleSaveFaq = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingFaq || !editingFaq.question || !editingFaq.answer) {
+      showToast('Please provide both question and answer.', 'error');
+      return;
+    }
+    setIsSavingFaq(true);
+    try {
+      if (editingFaq.isNew) {
+        await api.createFaq({
+          question: editingFaq.question,
+          answer: editingFaq.answer,
+          category: editingFaq.category || 'General',
+          display_order: Number(editingFaq.display_order) || faqs.length + 1,
+          is_published: editingFaq.is_published !== false,
+        });
+        showToast('FAQ created successfully.', 'success');
+      } else if (editingFaq.id) {
+        await api.updateFaq(editingFaq.id, {
+          question: editingFaq.question,
+          answer: editingFaq.answer,
+          category: editingFaq.category,
+          display_order: Number(editingFaq.display_order),
+          is_published: editingFaq.is_published,
+        });
+        showToast('FAQ updated successfully.', 'success');
+      }
+      setEditingFaq(null);
+      fetchFaqs();
+    } catch (err: any) {
+      showToast(err.message || 'Failed saving FAQ.', 'error');
+    } finally {
+      setIsSavingFaq(false);
+    }
+  };
+
+  // Toggle FAQ Published
+  const handleToggleFaqPublished = async (faq: FAQ) => {
+    const nextState = !faq.is_published;
+    try {
+      await api.updateFaq(faq.id, { is_published: nextState });
+      showToast(`FAQ is now ${nextState ? 'Published' : 'Hidden'}.`, 'success');
+      setFaqs((prev) => prev.map((f) => (f.id === faq.id ? { ...f, is_published: nextState } : f)));
+    } catch (err: any) {
+      showToast(err.message || 'Failed updating FAQ.', 'error');
+    }
+  };
+
+  // Delete FAQ
+  const handleDeleteFaq = async () => {
+    if (!deletingFaq) return;
+    setIsDeletingFaq(true);
+    try {
+      await api.deleteFaq(deletingFaq.id);
+      showToast('FAQ removed.', 'success');
+      setFaqs((prev) => prev.filter((f) => f.id !== deletingFaq.id));
+      setDeletingFaq(null);
+    } catch (err: any) {
+      showToast(err.message || 'Failed deleting FAQ.', 'error');
+    } finally {
+      setIsDeletingFaq(false);
+    }
+  };
+
+  // Save Testimonial (Create or Update)
+  const handleSaveTestimonial = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingTestimonial || !editingTestimonial.client_alias || !editingTestimonial.quote) {
+      showToast('Please provide client alias and quote.', 'error');
+      return;
+    }
+    setIsSavingTestimonial(true);
+    try {
+      if (editingTestimonial.isNew) {
+        await api.createTestimonial({
+          client_alias: editingTestimonial.client_alias,
+          quote: editingTestimonial.quote,
+          session_category: editingTestimonial.session_category || 'Individual Therapy',
+          is_verified: editingTestimonial.is_verified !== false,
+          is_published: editingTestimonial.is_published !== false,
+        });
+        showToast('Testimonial created successfully.', 'success');
+      } else if (editingTestimonial.id) {
+        await api.updateTestimonial(editingTestimonial.id, {
+          client_alias: editingTestimonial.client_alias,
+          quote: editingTestimonial.quote,
+          session_category: editingTestimonial.session_category,
+          is_verified: editingTestimonial.is_verified,
+          is_published: editingTestimonial.is_published,
+        });
+        showToast('Testimonial updated successfully.', 'success');
+      }
+      setEditingTestimonial(null);
+      fetchTestimonials();
+    } catch (err: any) {
+      showToast(err.message || 'Failed saving testimonial.', 'error');
+    } finally {
+      setIsSavingTestimonial(false);
+    }
+  };
+
+  // Toggle Testimonial Published
+  const handleToggleTestimonialPublished = async (t: Testimonial) => {
+    const nextState = !t.is_published;
+    try {
+      await api.updateTestimonial(t.id, { is_published: nextState });
+      showToast(`Testimonial is now ${nextState ? 'Published' : 'Hidden'}.`, 'success');
+      setTestimonials((prev) => prev.map((item) => (item.id === t.id ? { ...item, is_published: nextState } : item)));
+    } catch (err: any) {
+      showToast(err.message || 'Failed updating testimonial.', 'error');
+    }
+  };
+
+  // Delete Testimonial
+  const handleDeleteTestimonial = async () => {
+    if (!deletingTestimonial) return;
+    setIsDeletingTestimonial(true);
+    try {
+      await api.deleteTestimonial(deletingTestimonial.id);
+      showToast('Testimonial removed.', 'success');
+      setTestimonials((prev) => prev.filter((t) => t.id !== deletingTestimonial.id));
+      setDeletingTestimonial(null);
+    } catch (err: any) {
+      showToast(err.message || 'Failed deleting testimonial.', 'error');
+    } finally {
+      setIsDeletingTestimonial(false);
+    }
+  };
+
+  // Toggle Inquiry Resolved
+  const handleToggleInquiryResolved = async (msg: ContactMessage) => {
+    const nextState = !msg.is_resolved;
+    try {
+      await api.updateContactMessageStatus(msg.id, nextState);
+      showToast(`Inquiry marked as ${nextState ? 'Resolved' : 'Pending'}.`, 'success');
+      setInquiries((prev) => prev.map((m) => (m.id === msg.id ? { ...m, is_resolved: nextState } : m)));
+    } catch (err: any) {
+      showToast(err.message || 'Failed updating inquiry status.', 'error');
+    }
+  };
+
+  // Delete Inquiry
+  const handleDeleteInquiry = async () => {
+    if (!deletingInquiry) return;
+    setIsDeletingInquiry(true);
+    try {
+      await api.deleteContactMessage(deletingInquiry.id);
+      showToast('Inquiry removed from ledger.', 'success');
+      setInquiries((prev) => prev.filter((m) => m.id !== deletingInquiry.id));
+      setDeletingInquiry(null);
+    } catch (err: any) {
+      showToast(err.message || 'Failed deleting inquiry.', 'error');
+    } finally {
+      setIsDeletingInquiry(false);
     }
   };
 
@@ -197,14 +451,14 @@ export const AdminServicesView: React.FC = () => {
       {/* Top Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-[#1C2420]">Services &amp; Packages Management</h1>
+          <h1 className="text-2xl font-bold text-[#1C2420]">Services, Bundles &amp; Content CMS</h1>
           <p className="text-xs text-[#54635B] mt-1">
-            Configure clinical therapy catalog, session durations, pricing in KES, delivery modes, and multi-session wellness pathways.
+            Configure clinical therapy catalog, session pricing in KES, care packages, patient FAQs, testimonials, and client inquiries.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          {activeTab === 'services' ? (
+          {activeTab === 'services' && (
             <Button
               variant="primary"
               size="sm"
@@ -225,7 +479,9 @@ export const AdminServicesView: React.FC = () => {
             >
               Add New Service
             </Button>
-          ) : (
+          )}
+
+          {activeTab === 'packages' && (
             <Button
               variant="primary"
               size="sm"
@@ -246,12 +502,55 @@ export const AdminServicesView: React.FC = () => {
             </Button>
           )}
 
+          {activeTab === 'faqs' && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() =>
+                setEditingFaq({
+                  isNew: true,
+                  question: '',
+                  answer: '',
+                  category: 'General',
+                  display_order: faqs.length + 1,
+                  is_published: true,
+                })
+              }
+              leftIcon={<Plus className="w-4 h-4" />}
+            >
+              Add FAQ
+            </Button>
+          )}
+
+          {activeTab === 'testimonials' && (
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() =>
+                setEditingTestimonial({
+                  isNew: true,
+                  client_alias: '',
+                  quote: '',
+                  session_category: 'Individual Therapy',
+                  is_verified: true,
+                  is_published: true,
+                })
+              }
+              leftIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Testimonial
+            </Button>
+          )}
+
           <Button
             variant="outline"
             size="sm"
             onClick={() => {
               fetchServices();
               fetchPackages();
+              fetchFaqs();
+              fetchTestimonials();
+              fetchInquiries();
             }}
             leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
           >
@@ -261,10 +560,10 @@ export const AdminServicesView: React.FC = () => {
       </div>
 
       {/* Primary Tab Navigation */}
-      <div className="flex items-center gap-2 border-b border-[#E3DED6] pb-1">
+      <div className="flex items-center gap-2 border-b border-[#E3DED6] pb-1 overflow-x-auto scrollbar-none">
         <button
           onClick={() => setActiveTab('services')}
-          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all cursor-pointer flex items-center gap-2 ${
+          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'services'
               ? 'bg-white text-[#2D5A46] border-t-2 border-[#2D5A46] shadow-2xs font-extrabold'
               : 'text-[#54635B] hover:text-[#1C2420]'
@@ -276,7 +575,7 @@ export const AdminServicesView: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('packages')}
-          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all cursor-pointer flex items-center gap-2 ${
+          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
             activeTab === 'packages'
               ? 'bg-white text-[#2D5A46] border-t-2 border-[#2D5A46] shadow-2xs font-extrabold'
               : 'text-[#54635B] hover:text-[#1C2420]'
@@ -284,6 +583,42 @@ export const AdminServicesView: React.FC = () => {
         >
           <PackageIcon className="w-4 h-4" />
           <span>Care Packages ({packages.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('faqs')}
+          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'faqs'
+              ? 'bg-white text-[#2D5A46] border-t-2 border-[#2D5A46] shadow-2xs font-extrabold'
+              : 'text-[#54635B] hover:text-[#1C2420]'
+          }`}
+        >
+          <HelpCircle className="w-4 h-4" />
+          <span>FAQs Knowledgebase ({faqs.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('testimonials')}
+          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'testimonials'
+              ? 'bg-white text-[#2D5A46] border-t-2 border-[#2D5A46] shadow-2xs font-extrabold'
+              : 'text-[#54635B] hover:text-[#1C2420]'
+          }`}
+        >
+          <Quote className="w-4 h-4" />
+          <span>Testimonials ({testimonials.length})</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('inquiries')}
+          className={`px-4 py-2 text-xs font-bold rounded-t-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+            activeTab === 'inquiries'
+              ? 'bg-white text-[#2D5A46] border-t-2 border-[#2D5A46] shadow-2xs font-extrabold'
+              : 'text-[#54635B] hover:text-[#1C2420]'
+          }`}
+        >
+          <MessageSquare className="w-4 h-4" />
+          <span>Inquiries &amp; Contact Form ({inquiries.filter((i) => !i.is_resolved).length} Pending)</span>
         </button>
       </div>
 
@@ -387,13 +722,22 @@ export const AdminServicesView: React.FC = () => {
                         </td>
 
                         <td className="p-3.5 pr-5 whitespace-nowrap text-right">
-                          <button
-                            onClick={() => setEditingService(s)}
-                            className="p-1.5 text-[#54635B] hover:text-[#2D5A46] hover:bg-[#EBF2EE] rounded-lg transition-colors cursor-pointer"
-                            title="Edit Service"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
+                          <div className="flex items-center justify-end gap-1.5">
+                            <button
+                              onClick={() => setEditingService(s)}
+                              className="p-1.5 text-[#54635B] hover:text-[#2D5A46] hover:bg-[#EBF2EE] rounded-lg transition-colors cursor-pointer"
+                              title="Edit Service"
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => setDeletingService(s)}
+                              className="p-1.5 text-[#A63B30] hover:text-red-700 hover:bg-[#FCECE9] rounded-lg transition-colors cursor-pointer"
+                              title="Delete Service"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -473,7 +817,16 @@ export const AdminServicesView: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="pt-4 mt-4 border-t border-[#EDE9E1] flex items-center justify-end">
+                    <div className="pt-4 mt-4 border-t border-[#EDE9E1] flex items-center justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setDeletingPackage(pkg)}
+                        className="text-[#A63B30] border-[#F8D8D3] hover:bg-[#FCECE9]"
+                        leftIcon={<Trash2 className="w-3.5 h-3.5" />}
+                      >
+                        Delete
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"
@@ -482,6 +835,262 @@ export const AdminServicesView: React.FC = () => {
                       >
                         Edit Package
                       </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 3. FAQS TAB */}
+      {/* ========================================================================= */}
+      {activeTab === 'faqs' && (
+        <div className="space-y-4">
+          {isLoadingFaqs ? (
+            <div className="py-20 flex flex-col items-center justify-center text-[#54635B]">
+              <Loader2 className="w-8 h-8 animate-spin text-[#2D5A46] mb-2" />
+              <p className="text-xs">Loading patient FAQs knowledgebase...</p>
+            </div>
+          ) : faqs.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#E3DED6] shadow-xs">
+              <HelpCircle className="w-10 h-10 text-[#78867E] mx-auto mb-3 opacity-60" />
+              <h3 className="font-bold text-[#1C2420] text-sm">No FAQs Recorded Yet</h3>
+              <p className="text-xs text-[#54635B] mt-1 max-w-sm mx-auto">
+                Add frequently asked questions to clarify confidentiality, pricing, booking procedures, and intake requirements.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {faqs.map((faq) => (
+                <div
+                  key={faq.id}
+                  className="bg-white rounded-2xl p-5 border border-[#E3DED6] shadow-xs flex flex-col sm:flex-row sm:items-start justify-between gap-4"
+                >
+                  <div className="space-y-2 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#F4EFEA] text-[#1C2420]">
+                        {faq.category || 'General'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleFaqPublished(faq)}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
+                          faq.is_published
+                            ? 'bg-[#E8F3ED] text-[#286E47] border border-[#286E47]/20'
+                            : 'bg-[#FCECE9] text-[#A63B30] border border-[#A63B30]/20'
+                        }`}
+                      >
+                        {faq.is_published ? 'Published on Public Site' : 'Draft / Hidden'}
+                      </button>
+                    </div>
+                    <h4 className="text-sm font-bold text-[#1C2420]">{faq.question}</h4>
+                    <p className="text-xs text-[#54635B] leading-relaxed">{faq.answer}</p>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 self-end sm:self-center shrink-0">
+                    <button
+                      onClick={() => setEditingFaq(faq)}
+                      className="p-1.5 text-[#54635B] hover:text-[#2D5A46] hover:bg-[#EBF2EE] rounded-lg transition-colors cursor-pointer"
+                      title="Edit FAQ"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setDeletingFaq(faq)}
+                      className="p-1.5 text-[#A63B30] hover:text-red-700 hover:bg-[#FCECE9] rounded-lg transition-colors cursor-pointer"
+                      title="Delete FAQ"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 4. TESTIMONIALS TAB */}
+      {/* ========================================================================= */}
+      {activeTab === 'testimonials' && (
+        <div className="space-y-4">
+          {isLoadingTestimonials ? (
+            <div className="py-20 flex flex-col items-center justify-center text-[#54635B]">
+              <Loader2 className="w-8 h-8 animate-spin text-[#2D5A46] mb-2" />
+              <p className="text-xs">Loading client testimonials...</p>
+            </div>
+          ) : testimonials.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#E3DED6] shadow-xs">
+              <Quote className="w-10 h-10 text-[#78867E] mx-auto mb-3 opacity-60" />
+              <h3 className="font-bold text-[#1C2420] text-sm">No Testimonials Recorded</h3>
+              <p className="text-xs text-[#54635B] mt-1 max-w-sm mx-auto">
+                Publish anonymous, consensual client feedback to build patient trust and evidence-based therapeutic credibility.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {testimonials.map((t) => (
+                <div
+                  key={t.id}
+                  className="bg-white rounded-3xl p-5 border border-[#E3DED6] shadow-xs flex flex-col justify-between"
+                >
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-[#FAF2E4] text-[#9E6B1F]">
+                        {t.session_category || 'Individual Therapy'}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleTestimonialPublished(t)}
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-md cursor-pointer transition-colors ${
+                          t.is_published
+                            ? 'bg-[#E8F3ED] text-[#286E47] border border-[#286E47]/20'
+                            : 'bg-[#FCECE9] text-[#A63B30] border border-[#A63B30]/20'
+                        }`}
+                      >
+                        {t.is_published ? 'Published' : 'Hidden'}
+                      </button>
+                    </div>
+
+                    <p className="text-xs text-[#1C2420] italic leading-relaxed">
+                      "{t.quote}"
+                    </p>
+
+                    <div className="pt-2 flex items-center justify-between text-xs text-[#54635B] border-t border-[#EDE9E1]">
+                      <div className="font-bold text-[#1C2420]">{t.client_alias}</div>
+                      {t.is_verified && (
+                        <span className="text-[10px] font-semibold text-[#2D5A46] flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3 text-[#2D5A46]" /> Verified Care
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="pt-3 mt-3 border-t border-[#EDE9E1] flex items-center justify-end gap-1.5">
+                    <button
+                      onClick={() => setEditingTestimonial(t)}
+                      className="p-1.5 text-[#54635B] hover:text-[#2D5A46] hover:bg-[#EBF2EE] rounded-lg transition-colors cursor-pointer"
+                      title="Edit Testimonial"
+                    >
+                      <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => setDeletingTestimonial(t)}
+                      className="p-1.5 text-[#A63B30] hover:text-red-700 hover:bg-[#FCECE9] rounded-lg transition-colors cursor-pointer"
+                      title="Delete Testimonial"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 5. INQUIRIES & CONTACT FORM TAB */}
+      {/* ========================================================================= */}
+      {activeTab === 'inquiries' && (
+        <div className="space-y-4">
+          {isLoadingInquiries ? (
+            <div className="py-20 flex flex-col items-center justify-center text-[#54635B]">
+              <Loader2 className="w-8 h-8 animate-spin text-[#2D5A46] mb-2" />
+              <p className="text-xs">Loading contact inquiries...</p>
+            </div>
+          ) : inquiries.length === 0 ? (
+            <div className="bg-white rounded-3xl p-12 text-center border border-[#E3DED6] shadow-xs">
+              <MessageSquare className="w-10 h-10 text-[#78867E] mx-auto mb-3 opacity-60" />
+              <h3 className="font-bold text-[#1C2420] text-sm">No Inquiries Submitted</h3>
+              <p className="text-xs text-[#54635B] mt-1 max-w-sm mx-auto">
+                Prospective client inquiries submitted via the public contact form appear here for administrative triage and response.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {inquiries.map((msg) => {
+                const cleanPhone = (msg.phone || '').replace(/[^0-9]/g, '');
+                const waLink = cleanPhone ? `https://wa.me/${cleanPhone.startsWith('0') ? '254' + cleanPhone.slice(1) : cleanPhone}` : null;
+                return (
+                  <div
+                    key={msg.id}
+                    className={`bg-white rounded-2xl p-5 border shadow-xs transition-all ${
+                      msg.is_resolved ? 'border-[#EDE9E1] opacity-75' : 'border-[#2D5A46]/30 bg-[#FDFBF7]'
+                    }`}
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#EDE9E1]">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${msg.is_resolved ? 'bg-slate-300' : 'bg-amber-500 animate-pulse'}`} />
+                        <h4 className="text-sm font-bold text-[#1C2420]">{msg.name}</h4>
+                        <span className="text-xs text-[#78867E]">({msg.subject || 'General Inquiry'})</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[11px] text-[#78867E]">
+                          {new Date(msg.created_at).toLocaleDateString(undefined, {
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleToggleInquiryResolved(msg)}
+                          className={`text-[10px] font-bold px-2.5 py-1 rounded-lg cursor-pointer transition-colors ${
+                            msg.is_resolved
+                              ? 'bg-[#E8F3ED] text-[#286E47] border border-[#286E47]/20 hover:bg-[#D4EBDD]'
+                              : 'bg-[#FAF2E4] text-[#9E6B1F] border border-[#D6A54A]/30 hover:bg-[#F5E6CC]'
+                          }`}
+                        >
+                          {msg.is_resolved ? 'Resolved ✓' : 'Mark as Handled'}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="py-3 text-xs text-[#1C2420] leading-relaxed whitespace-pre-wrap">
+                      {msg.message}
+                    </div>
+
+                    <div className="pt-3 border-t border-[#EDE9E1] flex flex-wrap items-center justify-between gap-3 text-xs">
+                      <div className="flex flex-wrap items-center gap-3 text-[#54635B]">
+                        <a
+                          href={`mailto:${msg.email}?subject=Regarding your Be Sawa Inquiry`}
+                          className="flex items-center gap-1 hover:text-[#2D5A46] font-medium"
+                        >
+                          <Mail className="w-3.5 h-3.5" />
+                          <span>{msg.email}</span>
+                        </a>
+                        {msg.phone && (
+                          <a href={`tel:${msg.phone}`} className="flex items-center gap-1 hover:text-[#2D5A46] font-medium">
+                            <Phone className="w-3.5 h-3.5" />
+                            <span>{msg.phone}</span>
+                          </a>
+                        )}
+                        {waLink && (
+                          <a
+                            href={waLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-[#2D5A46] hover:underline font-semibold"
+                          >
+                            <MessageSquare className="w-3.5 h-3.5" />
+                            <span>WhatsApp Care Dispatch</span>
+                          </a>
+                        )}
+                      </div>
+
+                      <button
+                        onClick={() => setDeletingInquiry(msg)}
+                        className="p-1.5 text-[#A63B30] hover:text-red-700 hover:bg-[#FCECE9] rounded-lg transition-colors cursor-pointer"
+                        title="Delete Inquiry"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
                 );
@@ -761,6 +1370,381 @@ export const AdminServicesView: React.FC = () => {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* DELETE SERVICE CONFIRMATION MODAL */}
+      {/* ========================================================================= */}
+      {deletingService && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-[#A63B30]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FCECE9] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#A63B30]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-[#1C2420]">Delete Therapy Service?</h3>
+                <p className="text-xs text-[#78867E]">This will remove it from the catalog.</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#54635B] bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1]">
+              Are you sure you want to delete <strong className="text-[#1C2420]">"{deletingService.name}"</strong>? Existing completed bookings will remain historically preserved.
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setDeletingService(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDeleteService}
+                isLoading={isDeletingService}
+                className="bg-[#A63B30] hover:bg-red-700 text-white border-transparent"
+              >
+                Yes, Delete Service
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* DELETE PACKAGE CONFIRMATION MODAL */}
+      {/* ========================================================================= */}
+      {deletingPackage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-[#A63B30]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FCECE9] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#A63B30]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-[#1C2420]">Delete Care Package?</h3>
+                <p className="text-xs text-[#78867E]">Multi-session bundle will be retired.</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#54635B] bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1]">
+              Are you sure you want to delete <strong className="text-[#1C2420]">"{deletingPackage.name}"</strong>?
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setDeletingPackage(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDeletePackage}
+                isLoading={isDeletingPackage}
+                className="bg-[#A63B30] hover:bg-red-700 text-white border-transparent"
+              >
+                Yes, Delete Package
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* EDIT / CREATE FAQ MODAL */}
+      {/* ========================================================================= */}
+      {editingFaq && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDE9E1]">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-xl bg-[#EBF2EE] text-[#2D5A46] flex items-center justify-center">
+                  <HelpCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1C2420]">
+                    {editingFaq.isNew ? 'Create Patient FAQ' : 'Edit FAQ'}
+                  </h3>
+                  <p className="text-xs text-[#54635B]">Help patients understand Be Sawa's care model</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingFaq(null)}
+                className="p-1.5 text-[#78867E] hover:text-[#1C2420] rounded-lg hover:bg-[#F4EFEA]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveFaq} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Question *</label>
+                <input
+                  type="text"
+                  required
+                  value={editingFaq.question || ''}
+                  onChange={(e) => setEditingFaq({ ...editingFaq, question: e.target.value })}
+                  placeholder="e.g. How does confidential online counselling work?"
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Answer *</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={editingFaq.answer || ''}
+                  onChange={(e) => setEditingFaq({ ...editingFaq, answer: e.target.value })}
+                  placeholder="Provide a warm, reassuring, and clinically clear response..."
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl p-3 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Category</label>
+                  <select
+                    value={editingFaq.category || 'General'}
+                    onChange={(e) => setEditingFaq({ ...editingFaq, category: e.target.value })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  >
+                    <option value="General">General</option>
+                    <option value="Confidentiality">Confidentiality & Ethics</option>
+                    <option value="Booking & Rates">Booking & Rates</option>
+                    <option value="In-Person Sanctuary">In-Person Sanctuary</option>
+                    <option value="Telehealth">Online Telehealth</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Display Order</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={editingFaq.display_order || 1}
+                    onChange={(e) => setEditingFaq({ ...editingFaq, display_order: Number(e.target.value) })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="faq_is_published"
+                  checked={editingFaq.is_published !== false}
+                  onChange={(e) => setEditingFaq({ ...editingFaq, is_published: e.target.checked })}
+                  className="rounded border-[#E3DED6] text-[#2D5A46] focus:ring-[#2D5A46]"
+                />
+                <label htmlFor="faq_is_published" className="text-xs font-semibold text-[#1C2420]">
+                  Publish immediately on public website
+                </label>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <Button type="button" variant="outline" size="sm" onClick={() => setEditingFaq(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm" isLoading={isSavingFaq}>
+                  {editingFaq.isNew ? 'Create FAQ' : 'Save Changes'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE FAQ MODAL */}
+      {deletingFaq && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-[#A63B30]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FCECE9] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#A63B30]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-[#1C2420]">Delete FAQ?</h3>
+                <p className="text-xs text-[#78867E]">This item will be permanently removed.</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#54635B] bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1]">
+              "{deletingFaq.question}"
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setDeletingFaq(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDeleteFaq}
+                isLoading={isDeletingFaq}
+                className="bg-[#A63B30] hover:bg-red-700 text-white border-transparent"
+              >
+                Yes, Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* EDIT / CREATE TESTIMONIAL MODAL */}
+      {/* ========================================================================= */}
+      {editingTestimonial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDE9E1]">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-xl bg-[#FAF2E4] text-[#9E6B1F] flex items-center justify-center">
+                  <Quote className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1C2420]">
+                    {editingTestimonial.isNew ? 'Add Client Testimonial' : 'Edit Testimonial'}
+                  </h3>
+                  <p className="text-xs text-[#54635B]">Consensual, anonymous client impact stories</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingTestimonial(null)}
+                className="p-1.5 text-[#78867E] hover:text-[#1C2420] rounded-lg hover:bg-[#F4EFEA]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveTestimonial} className="space-y-4 text-xs">
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Client Alias / Initials *</label>
+                <input
+                  type="text"
+                  required
+                  value={editingTestimonial.client_alias || ''}
+                  onChange={(e) => setEditingTestimonial({ ...editingTestimonial, client_alias: e.target.value })}
+                  placeholder="e.g. Wanjiku M., Corporate Executive"
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Session Category</label>
+                <input
+                  type="text"
+                  value={editingTestimonial.session_category || 'Individual Care'}
+                  onChange={(e) => setEditingTestimonial({ ...editingTestimonial, session_category: e.target.value })}
+                  placeholder="e.g. Individual Therapy, Couples Mediation"
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Client Quote *</label>
+                <textarea
+                  rows={4}
+                  required
+                  value={editingTestimonial.quote || ''}
+                  onChange={(e) => setEditingTestimonial({ ...editingTestimonial, quote: e.target.value })}
+                  placeholder="Describe the client's therapeutic transformation..."
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl p-3 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-5 pt-1">
+                <label className="flex items-center gap-2 text-xs font-semibold text-[#1C2420]">
+                  <input
+                    type="checkbox"
+                    checked={editingTestimonial.is_verified !== false}
+                    onChange={(e) => setEditingTestimonial({ ...editingTestimonial, is_verified: e.target.checked })}
+                    className="rounded border-[#E3DED6] text-[#2D5A46] focus:ring-[#2D5A46]"
+                  />
+                  Mark as Verified Care
+                </label>
+                <label className="flex items-center gap-2 text-xs font-semibold text-[#1C2420]">
+                  <input
+                    type="checkbox"
+                    checked={editingTestimonial.is_published !== false}
+                    onChange={(e) => setEditingTestimonial({ ...editingTestimonial, is_published: e.target.checked })}
+                    className="rounded border-[#E3DED6] text-[#2D5A46] focus:ring-[#2D5A46]"
+                  />
+                  Published on public site
+                </label>
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <Button type="button" variant="outline" size="sm" onClick={() => setEditingTestimonial(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm" isLoading={isSavingTestimonial}>
+                  {editingTestimonial.isNew ? 'Create Testimonial' : 'Save Changes'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE TESTIMONIAL MODAL */}
+      {deletingTestimonial && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-[#A63B30]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FCECE9] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#A63B30]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-[#1C2420]">Delete Testimonial?</h3>
+                <p className="text-xs text-[#78867E]">Remove feedback from public showcase.</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#54635B] bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1]">
+              "{deletingTestimonial.client_alias}"
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setDeletingTestimonial(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDeleteTestimonial}
+                isLoading={isDeletingTestimonial}
+                className="bg-[#A63B30] hover:bg-red-700 text-white border-transparent"
+              >
+                Yes, Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE INQUIRY MODAL */}
+      {deletingInquiry && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-[#A63B30]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FCECE9] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#A63B30]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-[#1C2420]">Delete Contact Inquiry?</h3>
+                <p className="text-xs text-[#78867E]">Remove from admin messages ledger.</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#54635B] bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1]">
+              From: <strong className="text-[#1C2420]">{deletingInquiry.name}</strong> ({deletingInquiry.email})
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setDeletingInquiry(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDeleteInquiry}
+                isLoading={isDeletingInquiry}
+                className="bg-[#A63B30] hover:bg-red-700 text-white border-transparent"
+              >
+                Yes, Remove
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -19,9 +19,13 @@ import {
   ExternalLink,
   ShieldCheck,
   RefreshCw,
+  Plus,
+  Trash2,
+  Edit2,
+  AlertTriangle,
 } from 'lucide-react';
 import { api } from '../../api';
-import { Booking } from '../../types';
+import { Booking, Service, FullTherapist } from '../../types';
 import { Button } from '../../components/common/Button';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { useToast } from '../../context/ToastContext';
@@ -31,6 +35,8 @@ import { WhatsAppDispatcherModal } from '../../components/admin/WhatsAppDispatch
 export const AdminBookingsView: React.FC = () => {
   const { showToast } = useToast();
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  const [therapists, setTherapists] = useState<FullTherapist[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
@@ -46,6 +52,39 @@ export const AdminBookingsView: React.FC = () => {
   const [cancellingBooking, setCancellingBooking] = useState<Booking | null>(null);
   const [cancellationReason, setCancellationReason] = useState('Client requested rescheduling');
 
+  // Manual Booking Creation Modal State
+  const [showCreateBookingModal, setShowCreateBookingModal] = useState(false);
+  const [isSubmittingNewBooking, setIsSubmittingNewBooking] = useState(false);
+  const [newBookingData, setNewBookingData] = useState({
+    client_name: '',
+    client_phone: '',
+    client_email: '',
+    service_id: '',
+    therapist_id: '',
+    session_date: new Date().toISOString().split('T')[0],
+    start_time: '10:00 AM',
+    delivery_mode: 'IN_PERSON' as 'IN_PERSON' | 'ONLINE',
+    payment_status: 'PAID' as 'PAID' | 'PENDING',
+    amount: 1500,
+    notes: '',
+  });
+
+  // Edit / Reschedule Modal State
+  const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  const [isSavingBookingEdit, setIsSavingBookingEdit] = useState(false);
+  const [editBookingData, setEditBookingData] = useState({
+    session_date: '',
+    start_time: '',
+    delivery_mode: 'IN_PERSON' as 'IN_PERSON' | 'ONLINE',
+    service_id: '',
+    therapist_id: '',
+    notes: '',
+  });
+
+  // Deletion Modal State
+  const [deletingBooking, setDeletingBooking] = useState<Booking | null>(null);
+  const [isDeletingBooking, setIsDeletingBooking] = useState(false);
+
   const fetchBookings = () => {
     setIsLoading(true);
     api
@@ -55,8 +94,31 @@ export const AdminBookingsView: React.FC = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const fetchAuxiliary = () => {
+    Promise.all([api.getServices(), api.getAdminTherapists()])
+      .then(([sRes, tRes]) => {
+        setServices(sRes.services);
+        setTherapists(tRes.therapists);
+        if (sRes.services.length > 0) {
+          setNewBookingData((prev) => ({
+            ...prev,
+            service_id: prev.service_id || sRes.services[0].id,
+            amount: sRes.services[0].price,
+          }));
+        }
+        if (tRes.therapists.length > 0) {
+          setNewBookingData((prev) => ({
+            ...prev,
+            therapist_id: prev.therapist_id || tRes.therapists[0].id,
+          }));
+        }
+      })
+      .catch((err) => console.error('Failed auxiliary fetch:', err));
+  };
+
   useEffect(() => {
     fetchBookings();
+    fetchAuxiliary();
   }, []);
 
   const handleUpdateStatus = async (id: string, newStatus: string, reason?: string) => {
@@ -75,6 +137,120 @@ export const AdminBookingsView: React.FC = () => {
       showToast(err.message || 'Failed updating appointment status.', 'error');
     } finally {
       setActionLoadingId(null);
+    }
+  };
+
+  const handleCreateBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newBookingData.client_name || !newBookingData.client_phone || !newBookingData.service_id || !newBookingData.therapist_id) {
+      showToast('Please fill all required booking fields.', 'error');
+      return;
+    }
+
+    setIsSubmittingNewBooking(true);
+    try {
+      const selectedService = services.find((s) => s.id === newBookingData.service_id);
+      const selectedTherapist = therapists.find((t) => t.id === newBookingData.therapist_id);
+
+      await api.createAdminBooking({
+        client_name: newBookingData.client_name,
+        client_phone: newBookingData.client_phone,
+        client_email: newBookingData.client_email || undefined,
+        service_id: newBookingData.service_id,
+        service_name: selectedService?.name,
+        therapist_id: newBookingData.therapist_id,
+        therapist_name: selectedTherapist?.full_name,
+        session_date: newBookingData.session_date,
+        start_time: newBookingData.start_time,
+        delivery_mode: newBookingData.delivery_mode,
+        payment_status: newBookingData.payment_status,
+        amount: Number(newBookingData.amount) || selectedService?.price || 1500,
+        notes: newBookingData.notes,
+      });
+
+      showToast('Appointment successfully created and added to clinical ledger.', 'success');
+      setShowCreateBookingModal(false);
+      setNewBookingData({
+        client_name: '',
+        client_phone: '',
+        client_email: '',
+        service_id: services[0]?.id || '',
+        therapist_id: therapists[0]?.id || '',
+        session_date: new Date().toISOString().split('T')[0],
+        start_time: '10:00 AM',
+        delivery_mode: 'IN_PERSON',
+        payment_status: 'PAID',
+        amount: services[0]?.price || 1500,
+        notes: '',
+      });
+      fetchBookings();
+    } catch (err: any) {
+      showToast(err.message || 'Failed creating appointment.', 'error');
+    } finally {
+      setIsSubmittingNewBooking(false);
+    }
+  };
+
+  const handleOpenEditBooking = (b: Booking) => {
+    setEditingBooking(b);
+    setEditBookingData({
+      session_date: b.date,
+      start_time: b.time,
+      delivery_mode: b.delivery_mode,
+      service_id: b.service_id || (services[0]?.id ?? ''),
+      therapist_id: b.therapist_id || (therapists[0]?.id ?? ''),
+      notes: b.client_notes || '',
+    });
+  };
+
+  const handleSaveEditBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBooking) return;
+
+    setIsSavingBookingEdit(true);
+    try {
+      const selectedService = services.find((s) => s.id === editBookingData.service_id);
+      const selectedTherapist = therapists.find((t) => t.id === editBookingData.therapist_id);
+
+      await api.updateAdminBooking(editingBooking.id, {
+        session_date: editBookingData.session_date,
+        start_time: editBookingData.start_time,
+        delivery_mode: editBookingData.delivery_mode,
+        service_id: editBookingData.service_id || undefined,
+        service_name: selectedService?.name,
+        therapist_id: editBookingData.therapist_id || undefined,
+        therapist_name: selectedTherapist?.full_name,
+        notes: editBookingData.notes,
+      });
+
+      showToast('Appointment details & schedule updated.', 'success');
+      setEditingBooking(null);
+      if (selectedBooking && selectedBooking.id === editingBooking.id) {
+        setSelectedBooking(null);
+      }
+      fetchBookings();
+    } catch (err: any) {
+      showToast(err.message || 'Failed updating appointment details.', 'error');
+    } finally {
+      setIsSavingBookingEdit(false);
+    }
+  };
+
+  const handleDeleteBooking = async () => {
+    if (!deletingBooking) return;
+    setIsDeletingBooking(true);
+    try {
+      await api.deleteAdminBooking(deletingBooking.id);
+      showToast(`Booking ${deletingBooking.booking_reference} removed from ledger.`, 'success');
+      setBookings((prev) => prev.filter((b) => b.id !== deletingBooking.id));
+      setDeletingBooking(null);
+      if (selectedBooking && selectedBooking.id === deletingBooking.id) {
+        setSelectedBooking(null);
+      }
+    } catch (err: any) {
+      showToast(err.message || 'Failed deleting booking.', 'error');
+    } finally {
+      setIsDeletingBooking(false);
     }
   };
 
@@ -112,14 +288,24 @@ export const AdminBookingsView: React.FC = () => {
             Dispatch, view client appointments, verify attendance, and handle session completions.
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={fetchBookings}
-          leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
-        >
-          Refresh List
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="primary"
+            size="sm"
+            onClick={() => setShowCreateBookingModal(true)}
+            leftIcon={<Plus className="w-4 h-4" />}
+          >
+            New Booking / Walk-In
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchBookings}
+            leftIcon={<RefreshCw className="w-3.5 h-3.5" />}
+          >
+            Refresh List
+          </Button>
+        </div>
       </div>
 
       {/* Status Tab Chips */}
@@ -303,6 +489,14 @@ export const AdminBookingsView: React.FC = () => {
                             </button>
                           )}
 
+                          <button
+                            onClick={() => handleOpenEditBooking(b)}
+                            className="p-1.5 text-[#54635B] hover:text-[#2D5A46] hover:bg-[#EBF2EE] rounded-lg cursor-pointer transition-colors"
+                            title="Edit / Reschedule Appointment"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+
                           {b.status !== 'CANCELLED' && b.status !== 'COMPLETED' && (
                             <button
                               disabled={isActionLoading}
@@ -313,6 +507,14 @@ export const AdminBookingsView: React.FC = () => {
                               <XCircle className="w-4 h-4" />
                             </button>
                           )}
+
+                          <button
+                            onClick={() => setDeletingBooking(b)}
+                            className="p-1.5 text-[#A63B30] hover:text-red-700 hover:bg-[#FCECE9] rounded-lg cursor-pointer transition-colors"
+                            title="Delete Appointment from Ledger"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -475,6 +677,23 @@ export const AdminBookingsView: React.FC = () => {
                     Mark as Concluded
                   </Button>
                 )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleOpenEditBooking(selectedBooking)}
+                  leftIcon={<Edit2 className="w-3.5 h-3.5" />}
+                >
+                  Reschedule / Edit
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setDeletingBooking(selectedBooking)}
+                  className="text-[#A63B30] border-[#F8D8D3] hover:bg-[#FCECE9]"
+                  leftIcon={<Trash2 className="w-3.5 h-3.5" />}
+                >
+                  Delete
+                </Button>
               </div>
 
               <Button
@@ -555,6 +774,346 @@ export const AdminBookingsView: React.FC = () => {
           booking={selectedBookingForWhatsApp}
           onClose={() => setSelectedBookingForWhatsApp(null)}
         />
+      )}
+
+      {/* ========================================================================= */}
+      {/* 1. MANUAL APPOINTMENT CREATION / WALK-IN MODAL */}
+      {/* ========================================================================= */}
+      {showCreateBookingModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-xl w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDE9E1]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#EBF2EE] text-[#2D5A46] flex items-center justify-center">
+                  <Calendar className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1C2420]">Create Clinical Appointment</h3>
+                  <p className="text-xs text-[#54635B]">Manual walk-in or direct phone/WhatsApp booking</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCreateBookingModal(false)}
+                className="p-1.5 text-[#78867E] hover:text-[#1C2420] rounded-lg hover:bg-[#F4EFEA]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateBooking} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Client Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newBookingData.client_name}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, client_name: e.target.value })}
+                    placeholder="e.g. Grace Wambui"
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Phone Number (M-Pesa) *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={newBookingData.client_phone}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, client_phone: e.target.value })}
+                    placeholder="e.g. 0712345678"
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Client Email (Optional)</label>
+                <input
+                  type="email"
+                  value={newBookingData.client_email}
+                  onChange={(e) => setNewBookingData({ ...newBookingData, client_email: e.target.value })}
+                  placeholder="e.g. grace@example.com"
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Therapy Service *</label>
+                  <select
+                    value={newBookingData.service_id}
+                    onChange={(e) => {
+                      const s = services.find((x) => x.id === e.target.value);
+                      setNewBookingData({
+                        ...newBookingData,
+                        service_id: e.target.value,
+                        amount: s?.price || newBookingData.amount,
+                      });
+                    }}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  >
+                    {services.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name} (KES {s.price.toLocaleString()})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Attending Practitioner *</label>
+                  <select
+                    value={newBookingData.therapist_id}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, therapist_id: e.target.value })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  >
+                    {therapists.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.full_name} ({t.title})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Session Date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={newBookingData.session_date}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, session_date: e.target.value })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Start Time *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newBookingData.start_time}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, start_time: e.target.value })}
+                    placeholder="e.g. 10:00 AM"
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Delivery Mode *</label>
+                  <select
+                    value={newBookingData.delivery_mode}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, delivery_mode: e.target.value as any })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  >
+                    <option value="IN_PERSON">In-Person (Kilimani)</option>
+                    <option value="ONLINE">Online (Google Meet)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Payment Status *</label>
+                  <select
+                    value={newBookingData.payment_status}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, payment_status: e.target.value as any })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  >
+                    <option value="PAID">Paid (M-Pesa / Cash / Card)</option>
+                    <option value="PENDING">Pending Settlement</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Fee (KES) *</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={newBookingData.amount}
+                    onChange={(e) => setNewBookingData({ ...newBookingData, amount: Number(e.target.value) })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] font-mono focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Clinical Context / Care Notes</label>
+                <textarea
+                  rows={2}
+                  value={newBookingData.notes}
+                  onChange={(e) => setNewBookingData({ ...newBookingData, notes: e.target.value })}
+                  placeholder="Walk-in referral, presenting concern, or intake notes..."
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl p-3 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <Button type="button" variant="outline" size="sm" onClick={() => setShowCreateBookingModal(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm" isLoading={isSubmittingNewBooking}>
+                  Schedule &amp; Add to Ledger
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 2. EDIT / RESCHEDULE APPOINTMENT MODAL */}
+      {/* ========================================================================= */}
+      {editingBooking && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EDE9E1]">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-[#FAF2E4] text-[#9E6B1F] flex items-center justify-center">
+                  <Edit2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#1C2420]">Edit / Reschedule Appointment</h3>
+                  <p className="text-xs text-[#54635B]">Ref: {editingBooking.booking_reference}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setEditingBooking(null)}
+                className="p-1.5 text-[#78867E] hover:text-[#1C2420] rounded-lg hover:bg-[#F4EFEA]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1] text-xs space-y-1">
+              <div className="font-bold text-[#1C2420]">Client: {editingBooking.client_name}</div>
+              <div className="text-[#54635B]">Phone: {editingBooking.client_phone}</div>
+            </div>
+
+            <form onSubmit={handleSaveEditBooking} className="space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Session Date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={editBookingData.session_date}
+                    onChange={(e) => setEditBookingData({ ...editBookingData, session_date: e.target.value })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Start Time *</label>
+                  <input
+                    type="text"
+                    required
+                    value={editBookingData.start_time}
+                    onChange={(e) => setEditBookingData({ ...editBookingData, start_time: e.target.value })}
+                    placeholder="e.g. 02:00 PM"
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Delivery Mode *</label>
+                <select
+                  value={editBookingData.delivery_mode}
+                  onChange={(e) => setEditBookingData({ ...editBookingData, delivery_mode: e.target.value as any })}
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                >
+                  <option value="IN_PERSON">In-Person (Kilimani Consultation Rooms)</option>
+                  <option value="ONLINE">Online Telehealth (Google Meet)</option>
+                </select>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Therapy Service</label>
+                  <select
+                    value={editBookingData.service_id}
+                    onChange={(e) => setEditBookingData({ ...editBookingData, service_id: e.target.value })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  >
+                    {services.map((s) => (
+                      <option key={s.id} value={s.id}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-[#1C2420] mb-1">Practitioner</label>
+                  <select
+                    value={editBookingData.therapist_id}
+                    onChange={(e) => setEditBookingData({ ...editBookingData, therapist_id: e.target.value })}
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  >
+                    {therapists.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        {t.full_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-[#1C2420] mb-1">Internal Clinical Notes</label>
+                <textarea
+                  rows={2}
+                  value={editBookingData.notes}
+                  onChange={(e) => setEditBookingData({ ...editBookingData, notes: e.target.value })}
+                  placeholder="Rescheduling reason, room allocation, or special accommodations..."
+                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl p-3 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                />
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2.5">
+                <Button type="button" variant="outline" size="sm" onClick={() => setEditingBooking(null)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" size="sm" isLoading={isSavingBookingEdit}>
+                  Save Updates
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 3. DELETE BOOKING CONFIRMATION MODAL */}
+      {/* ========================================================================= */}
+      {deletingBooking && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-[#A63B30]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FCECE9] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#A63B30]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-[#1C2420]">Delete Booking from Ledger?</h3>
+                <p className="text-xs text-[#78867E]">Ref: {deletingBooking.booking_reference}</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#54635B] bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1]">
+              Are you sure you want to delete the booking for <strong className="text-[#1C2420]">{deletingBooking.client_name}</strong> on {deletingBooking.date}? This should only be done for test or erroneous entries.
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setDeletingBooking(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDeleteBooking}
+                isLoading={isDeletingBooking}
+                className="bg-[#A63B30] hover:bg-red-700 text-white border-transparent"
+              >
+                Yes, Delete
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

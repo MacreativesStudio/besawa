@@ -12,6 +12,7 @@ import {
   AuditLog,
   FAQ,
   Testimonial,
+  ContactMessage,
   ClientProfile,
   AnalyticsData,
 } from '../types';
@@ -122,6 +123,20 @@ export const api = {
   // Admin Management
   getAdminMetrics: () => request<DashboardMetrics>('/admin/metrics'),
   getAdminBookings: () => request<{ bookings: Booking[] }>('/admin/bookings'),
+  createAdminBooking: (payload: any) =>
+    request<{ success: boolean; booking: Booking; message: string }>('/admin/bookings', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  updateAdminBooking: (id: string, updates: any) =>
+    request<{ success: boolean; booking: Booking; message: string }>(`/admin/bookings/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    }),
+  deleteAdminBooking: (id: string) =>
+    request<{ success: boolean; message: string }>(`/admin/bookings/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
   updateBookingStatus: (id: string, status: string, cancellation_reason?: string) =>
     request<{ success: boolean; status: string }>(`/admin/bookings/${id}/status`, {
       method: 'PATCH',
@@ -142,6 +157,10 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify(updates),
     }),
+  deleteService: (id: string) =>
+    request<{ success: boolean; message?: string }>(`/services/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
 
   getAdminPackages: () => request<{ packages: Package[] }>('/admin/packages'),
   createPackage: (payload: any) =>
@@ -154,6 +173,10 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify(updates),
     }),
+  deletePackage: (id: string) =>
+    request<{ success: boolean; message?: string }>(`/admin/packages/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
 
   getAdminTherapists: () => request<{ therapists: FullTherapist[] }>('/admin/therapists'),
   createAdminTherapist: (payload: any) =>
@@ -165,6 +188,10 @@ export const api = {
     request<{ success: boolean }>(`/admin/therapists/${encodeURIComponent(id)}`, {
       method: 'PATCH',
       body: JSON.stringify(updates),
+    }),
+  deleteAdminTherapist: (id: string) =>
+    request<{ success: boolean; message?: string }>(`/admin/therapists/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
     }),
   updateTherapistVerification: (id: string, verification_status: string, notes?: string) =>
     request<{ success: boolean; verification_status: string }>(`/admin/therapists/${id}/verification`, {
@@ -200,12 +227,54 @@ export const api = {
     }),
   getAdminAnalytics: () => request<AnalyticsData>('/admin/analytics'),
 
-  // Content
+  // Content & CMS Management (Public & Admin CRUD)
   getFaqs: () => request<{ faqs: FAQ[] }>('/content/faqs'),
+  getAdminFaqs: () => request<{ faqs: FAQ[] }>('/admin/faqs'),
+  createFaq: (payload: Partial<FAQ>) =>
+    request<{ success: boolean; faqId: string }>('/admin/faqs', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  updateFaq: (id: string, updates: Partial<FAQ>) =>
+    request<{ success: boolean }>(`/admin/faqs/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    }),
+  deleteFaq: (id: string) =>
+    request<{ success: boolean; message: string }>(`/admin/faqs/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
+
   getTestimonials: () => request<{ testimonials: Testimonial[] }>('/content/testimonials'),
+  getAdminTestimonials: () => request<{ testimonials: Testimonial[] }>('/admin/testimonials'),
+  createTestimonial: (payload: Partial<Testimonial>) =>
+    request<{ success: boolean; testimonialId: string }>('/admin/testimonials', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  updateTestimonial: (id: string, updates: Partial<Testimonial>) =>
+    request<{ success: boolean }>(`/admin/testimonials/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    }),
+  deleteTestimonial: (id: string) =>
+    request<{ success: boolean; message: string }>(`/admin/testimonials/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
+
   submitContact: (payload: { name: string; email: string; phone?: string; subject?: string; message: string }) =>
     request<{ success: boolean; message: string }>('/content/contact', {
       method: 'POST',
       body: JSON.stringify(payload),
+    }),
+  getAdminContactMessages: () => request<{ messages: ContactMessage[] }>('/admin/contact-messages'),
+  updateContactMessageStatus: (id: string, is_resolved: boolean) =>
+    request<{ success: boolean }>(`/admin/contact-messages/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ is_resolved }),
+    }),
+  deleteContactMessage: (id: string) =>
+    request<{ success: boolean; message: string }>(`/admin/contact-messages/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
     }),
 };

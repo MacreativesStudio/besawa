@@ -187,6 +187,9 @@ export interface FAQ {
   question: string;
   answer: string;
   category: string;
+  is_published?: boolean;
+  display_order?: number;
+  created_at?: string;
 }
 
 export interface Testimonial {
@@ -195,6 +198,19 @@ export interface Testimonial {
   quote: string;
   session_category?: string;
   is_verified: boolean;
+  is_published?: boolean;
+  created_at?: string;
+}
+
+export interface ContactMessage {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subject?: string;
+  message: string;
+  is_resolved: boolean;
+  created_at: string;
 }
 
 export interface DashboardMetrics {

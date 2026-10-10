@@ -20,6 +20,8 @@ import {
   FileCheck,
   RefreshCw,
   Pencil,
+  Trash2,
+  AlertTriangle,
 } from 'lucide-react';
 import { api } from '../../api';
 import { FullTherapist, Service } from '../../types';
@@ -37,6 +39,8 @@ export const AdminTherapistsView: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [selectedTherapist, setSelectedTherapist] = useState<FullTherapist | null>(null);
   const [editingTherapist, setEditingTherapist] = useState<FullTherapist | null>(null);
+  const [deletingTherapist, setDeletingTherapist] = useState<FullTherapist | null>(null);
+  const [isDeletingTherapist, setIsDeletingTherapist] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [editProfile, setEditProfile] = useState({
     full_name: '', title: '', bio: '', years_experience: 0, languages: '', areas_of_practice: '', profile_photo_url: '', supports_online: true, supports_in_person: true,
@@ -102,6 +106,21 @@ export const AdminTherapistsView: React.FC = () => {
       showToast(err.message || 'Failed updating verification status.', 'error');
     } finally {
       setIsUpdatingStatus(false);
+    }
+  };
+
+  const handleDeleteTherapist = async () => {
+    if (!deletingTherapist) return;
+    setIsDeletingTherapist(true);
+    try {
+      await api.deleteAdminTherapist(deletingTherapist.id);
+      showToast(`Practitioner profile for ${deletingTherapist.full_name} deleted.`, 'success');
+      setTherapists((prev) => prev.filter((t) => t.id !== deletingTherapist.id));
+      setDeletingTherapist(null);
+    } catch (err: any) {
+      showToast(err.message || 'Failed deleting practitioner.', 'error');
+    } finally {
+      setIsDeletingTherapist(false);
     }
   };
 
@@ -375,6 +394,13 @@ export const AdminTherapistsView: React.FC = () => {
                           className="px-2.5 py-1 text-[11px] font-bold rounded-lg border border-[#E3DED6] bg-white text-[#1C2420] hover:bg-[#F4EFEA] cursor-pointer transition-colors"
                         >
                           Governance
+                        </button>
+                        <button
+                          onClick={() => setDeletingTherapist(t)}
+                          className="p-1.5 text-[#A63B30] hover:text-red-700 hover:bg-[#FCECE9] rounded-lg cursor-pointer transition-colors"
+                          title="Archive / Delete Practitioner"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
                     </td>
@@ -713,6 +739,40 @@ export const AdminTherapistsView: React.FC = () => {
                 </Button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete / Archive Practitioner Confirmation Modal */}
+      {deletingTherapist && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+          <div className="bg-white rounded-3xl p-6 max-w-sm w-full border border-[#E3DED6] shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center gap-3 text-[#A63B30]">
+              <div className="w-10 h-10 rounded-2xl bg-[#FCECE9] flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-[#A63B30]" />
+              </div>
+              <div>
+                <h3 className="font-bold text-sm text-[#1C2420]">Archive Practitioner?</h3>
+                <p className="text-xs text-[#78867E]">Remove from clinical directory.</p>
+              </div>
+            </div>
+            <p className="text-xs text-[#54635B] bg-[#FBF9F5] p-3 rounded-xl border border-[#EDE9E1]">
+              Are you sure you want to remove <strong className="text-[#1C2420]">{deletingTherapist.full_name}</strong>? Existing historical session ledgers and settlements will be preserved.
+            </p>
+            <div className="flex items-center justify-end gap-2 pt-2">
+              <Button variant="outline" size="sm" onClick={() => setDeletingTherapist(null)}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleDeleteTherapist}
+                isLoading={isDeletingTherapist}
+                className="bg-[#A63B30] hover:bg-red-700 text-white border-transparent"
+              >
+                Yes, Remove
+              </Button>
+            </div>
           </div>
         </div>
       )}

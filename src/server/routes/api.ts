@@ -354,6 +354,31 @@ apiRouter.patch('/services/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'AD
   res.json({ success: true });
 });
 
+apiRouter.delete('/services/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  let deleted = false;
+  let serviceName = '';
+
+  db.mutate((draft) => {
+    const idx = draft.services.findIndex((s) => s.id === id);
+    if (idx !== -1) {
+      serviceName = draft.services[idx].name;
+      draft.services.splice(idx, 1);
+      // Remove any therapist_services links
+      draft.therapist_services = draft.therapist_services.filter((ts) => ts.service_id !== id);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    res.status(404).json({ error: 'Service not found.' });
+    return;
+  }
+
+  db.logAudit('SERVICE_DELETED', 'SERVICE', id, { serviceName }, req.user?.id, req.user?.email);
+  res.json({ success: true, message: `Service "${serviceName}" removed successfully.` });
+});
+
 // Admin All Services (Active and Inactive)
 apiRouter.get('/admin/services', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
   const state = db.getState();
@@ -447,6 +472,29 @@ apiRouter.patch('/admin/packages/:id', authMiddleware, requireRoles('SUPER_ADMIN
 
   db.logAudit('PACKAGE_UPDATED', 'PACKAGE', id, updates, req.user?.id, req.user?.email);
   res.json({ success: true });
+});
+
+apiRouter.delete('/admin/packages/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  let deleted = false;
+  let packageName = '';
+
+  db.mutate((draft) => {
+    const idx = draft.packages.findIndex((p) => p.id === id);
+    if (idx !== -1) {
+      packageName = draft.packages[idx].name;
+      draft.packages.splice(idx, 1);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    res.status(404).json({ error: 'Package not found.' });
+    return;
+  }
+
+  db.logAudit('PACKAGE_DELETED', 'PACKAGE', id, { packageName }, req.user?.id, req.user?.email);
+  res.json({ success: true, message: `Package "${packageName}" removed successfully.` });
 });
 
 // ====================================================================
@@ -672,6 +720,33 @@ apiRouter.patch('/admin/therapists/:id/verification', authMiddleware, requireRol
   );
 
   res.json({ success: true, verification_status });
+});
+
+apiRouter.delete('/admin/therapists/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  let deleted = false;
+  let therapistName = '';
+
+  db.mutate((draft) => {
+    const idx = draft.therapists.findIndex((t) => t.id === id);
+    if (idx !== -1) {
+      therapistName = draft.therapists[idx].full_name;
+      draft.therapists.splice(idx, 1);
+      // Clean up relations
+      draft.therapist_services = draft.therapist_services.filter((ts) => ts.therapist_id !== id);
+      draft.availability_rules = draft.availability_rules.filter((ar) => ar.therapist_id !== id);
+      draft.therapist_credentials = draft.therapist_credentials.filter((tc) => tc.therapist_id !== id);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    res.status(404).json({ error: 'Therapist not found.' });
+    return;
+  }
+
+  db.logAudit('THERAPIST_DELETED', 'THERAPIST', id, { therapistName }, req.user?.id, req.user?.email);
+  res.json({ success: true, message: `Practitioner "${therapistName}" removed successfully.` });
 });
 
 // ====================================================================
@@ -1023,6 +1098,129 @@ apiRouter.patch('/admin/bookings/:id/status', authMiddleware, requireRoles('SUPE
 
   db.logAudit('BOOKING_STATUS_CHANGED', 'BOOKING', id, { status, cancellation_reason }, req.user?.id, req.user?.email);
   res.json({ success: true, status });
+});
+
+// Admin Manual Appointment Booking (Walk-in, Phone, WhatsApp)
+apiRouter.post('/admin/bookings', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const {
+    service_id,
+    therapist_id,
+    date,
+    time,
+    delivery_mode,
+    client_name,
+    client_phone,
+    client_email,
+    client_notes,
+    status,
+    amount,
+  } = req.body;
+
+  if (!service_id || !therapist_id || !date || !time || !client_name?.trim() || !client_phone?.trim()) {
+    res.status(400).json({ error: 'Service, therapist, date, time, client name, and phone are required.' });
+    return;
+  }
+
+  const state = db.getState();
+  const therapist = state.therapists.find((t) => t.id === therapist_id);
+  const service = state.services.find((s) => s.id === service_id);
+
+  if (!therapist || !service) {
+    res.status(400).json({ error: 'Valid therapist and service must be selected.' });
+    return;
+  }
+
+  const price = isPositiveNumber(amount) ? Number(amount) : (therapist.session_rate_override || service.price);
+  const bookingRef = `BS-${Math.floor(10000000 + Math.random() * 90000000)}`;
+  const id = `bk_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const now = new Date().toISOString();
+
+  const newBooking = {
+    id,
+    booking_reference: bookingRef,
+    service_id,
+    therapist_id,
+    date,
+    time,
+    duration_minutes: service.duration_minutes || 50,
+    amount: price,
+    currency: service.currency || 'KES',
+    delivery_mode: delivery_mode || 'ONLINE',
+    client_name: client_name.trim(),
+    client_phone: client_phone.trim(),
+    client_email: (client_email || '').trim(),
+    client_notes: client_notes || 'Booked directly via administrative command.',
+    status: status || 'CONFIRMED',
+    cancellation_reason: null,
+    cancelled_at: null,
+    completed_at: status === 'COMPLETED' ? now : null,
+    created_at: now,
+    updated_at: now,
+  };
+
+  db.mutate((draft) => {
+    draft.bookings.push(newBooking);
+  });
+
+  db.logAudit('ADMIN_BOOKING_CREATED', 'BOOKING', id, { booking_reference: bookingRef, client_name, date, time }, req.user?.id, req.user?.email);
+  res.status(201).json({ success: true, booking: newBooking });
+});
+
+// Admin Reschedule & Update Booking Details
+apiRouter.patch('/admin/bookings/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  const allowedFields = ['date', 'time', 'delivery_mode', 'service_id', 'therapist_id', 'client_name', 'client_phone', 'client_email', 'client_notes', 'amount'];
+  const updates = Object.fromEntries(Object.entries(req.body || {}).filter(([k]) => allowedFields.includes(k)));
+
+  if (Object.keys(updates).length === 0) {
+    res.status(400).json({ error: 'No editable fields provided.' });
+    return;
+  }
+
+  const now = new Date().toISOString();
+  let found = false;
+
+  db.mutate((draft) => {
+    const b = draft.bookings.find((x) => x.id === id);
+    if (b) {
+      found = true;
+      Object.assign(b, updates, { updated_at: now });
+    }
+  });
+
+  if (!found) {
+    res.status(404).json({ error: 'Booking not found.' });
+    return;
+  }
+
+  db.logAudit('BOOKING_MODIFIED', 'BOOKING', id, updates, req.user?.id, req.user?.email);
+  res.json({ success: true, message: 'Appointment details updated successfully.' });
+});
+
+// Admin Delete Booking
+apiRouter.delete('/admin/bookings/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  let deleted = false;
+  let bookingRef = '';
+
+  db.mutate((draft) => {
+    const idx = draft.bookings.findIndex((b) => b.id === id);
+    if (idx !== -1) {
+      bookingRef = draft.bookings[idx].booking_reference;
+      draft.bookings.splice(idx, 1);
+      // Clean up any pending settlement
+      draft.settlements = draft.settlements.filter((s) => s.booking_id !== id);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    res.status(404).json({ error: 'Booking not found.' });
+    return;
+  }
+
+  db.logAudit('BOOKING_DELETED', 'BOOKING', id, { booking_reference: bookingRef }, req.user?.id, req.user?.email);
+  res.json({ success: true, message: `Booking "${bookingRef}" removed from ledger.` });
 });
 
 // ====================================================================
@@ -1538,3 +1736,203 @@ apiRouter.post('/content/contact', (req: Request, res: Response) => {
   db.logAudit('CONTACT_MESSAGE_RECEIVED', 'CONTACT', id, { name, email, subject });
   res.json({ success: true, message: 'Your message has been received with care. We will reach out shortly.' });
 });
+
+// Admin FAQs Management
+apiRouter.get('/admin/faqs', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const state = db.getState();
+  res.json({ faqs: state.faqs });
+});
+
+apiRouter.post('/admin/faqs', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { question, answer, category, is_published, display_order } = req.body;
+  if (!question?.trim() || !answer?.trim()) {
+    res.status(400).json({ error: 'Question and answer are required.' });
+    return;
+  }
+
+  const id = `faq_${Date.now()}`;
+  const now = new Date().toISOString();
+
+  db.mutate((draft) => {
+    draft.faqs.push({
+      id,
+      question: question.trim(),
+      answer: answer.trim(),
+      category: category || 'General',
+      is_published: is_published !== false,
+      display_order: Number(display_order) || draft.faqs.length + 1,
+      created_at: now,
+    });
+  });
+
+  db.logAudit('FAQ_CREATED', 'FAQ', id, { question }, req.user?.id, req.user?.email);
+  res.status(201).json({ success: true, faqId: id });
+});
+
+apiRouter.patch('/admin/faqs/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  const updates = req.body || {};
+  let found = false;
+
+  db.mutate((draft) => {
+    const f = draft.faqs.find((x) => x.id === id);
+    if (f) {
+      found = true;
+      Object.assign(f, updates);
+    }
+  });
+
+  if (!found) {
+    res.status(404).json({ error: 'FAQ not found.' });
+    return;
+  }
+
+  db.logAudit('FAQ_UPDATED', 'FAQ', id, updates, req.user?.id, req.user?.email);
+  res.json({ success: true });
+});
+
+apiRouter.delete('/admin/faqs/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  let deleted = false;
+
+  db.mutate((draft) => {
+    const idx = draft.faqs.findIndex((x) => x.id === id);
+    if (idx !== -1) {
+      draft.faqs.splice(idx, 1);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    res.status(404).json({ error: 'FAQ not found.' });
+    return;
+  }
+
+  db.logAudit('FAQ_DELETED', 'FAQ', id, {}, req.user?.id, req.user?.email);
+  res.json({ success: true, message: 'FAQ deleted.' });
+});
+
+// Admin Testimonials Management
+apiRouter.get('/admin/testimonials', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const state = db.getState();
+  res.json({ testimonials: state.testimonials });
+});
+
+apiRouter.post('/admin/testimonials', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { client_alias, quote, session_category, is_verified, is_published } = req.body;
+  if (!client_alias?.trim() || !quote?.trim()) {
+    res.status(400).json({ error: 'Client alias and quote are required.' });
+    return;
+  }
+
+  const id = `tst_${Date.now()}`;
+  const now = new Date().toISOString();
+
+  db.mutate((draft) => {
+    draft.testimonials.push({
+      id,
+      client_alias: client_alias.trim(),
+      quote: quote.trim(),
+      session_category: session_category || 'Individual Care',
+      is_verified: is_verified !== false,
+      is_published: is_published !== false,
+      created_at: now,
+    });
+  });
+
+  db.logAudit('TESTIMONIAL_CREATED', 'TESTIMONIAL', id, { client_alias }, req.user?.id, req.user?.email);
+  res.status(201).json({ success: true, testimonialId: id });
+});
+
+apiRouter.patch('/admin/testimonials/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  const updates = req.body || {};
+  let found = false;
+
+  db.mutate((draft) => {
+    const t = draft.testimonials.find((x) => x.id === id);
+    if (t) {
+      found = true;
+      Object.assign(t, updates);
+    }
+  });
+
+  if (!found) {
+    res.status(404).json({ error: 'Testimonial not found.' });
+    return;
+  }
+
+  db.logAudit('TESTIMONIAL_UPDATED', 'TESTIMONIAL', id, updates, req.user?.id, req.user?.email);
+  res.json({ success: true });
+});
+
+apiRouter.delete('/admin/testimonials/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  let deleted = false;
+
+  db.mutate((draft) => {
+    const idx = draft.testimonials.findIndex((x) => x.id === id);
+    if (idx !== -1) {
+      draft.testimonials.splice(idx, 1);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    res.status(404).json({ error: 'Testimonial not found.' });
+    return;
+  }
+
+  db.logAudit('TESTIMONIAL_DELETED', 'TESTIMONIAL', id, {}, req.user?.id, req.user?.email);
+  res.json({ success: true, message: 'Testimonial deleted.' });
+});
+
+// Admin Client Inquiries (Contact Form Submissions)
+apiRouter.get('/admin/contact-messages', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const state = db.getState();
+  res.json({ messages: state.contact_messages.slice().reverse() });
+});
+
+apiRouter.patch('/admin/contact-messages/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { is_resolved } = req.body;
+  let found = false;
+
+  db.mutate((draft) => {
+    const m = draft.contact_messages.find((x) => x.id === id);
+    if (m) {
+      found = true;
+      m.is_resolved = Boolean(is_resolved);
+    }
+  });
+
+  if (!found) {
+    res.status(404).json({ error: 'Message not found.' });
+    return;
+  }
+
+  db.logAudit('CONTACT_MESSAGE_STATUS_CHANGED', 'CONTACT', id, { is_resolved }, req.user?.id, req.user?.email);
+  res.json({ success: true });
+});
+
+apiRouter.delete('/admin/contact-messages/:id', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { id } = req.params;
+  let deleted = false;
+
+  db.mutate((draft) => {
+    const idx = draft.contact_messages.findIndex((x) => x.id === id);
+    if (idx !== -1) {
+      draft.contact_messages.splice(idx, 1);
+      deleted = true;
+    }
+  });
+
+  if (!deleted) {
+    res.status(404).json({ error: 'Message not found.' });
+    return;
+  }
+
+  db.logAudit('CONTACT_MESSAGE_DELETED', 'CONTACT', id, {}, req.user?.id, req.user?.email);
+  res.json({ success: true, message: 'Message removed.' });
+});
+
