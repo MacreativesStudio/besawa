@@ -304,29 +304,6 @@
       "updated_at": "2026-09-29T04:15:55.967Z"
     },
     {
-      "id": "thp_unnamed_pending_8",
-      "user_id": null,
-      "full_name": "Practitioner Candidate (Profile Incomplete)",
-      "title": "Practitioner Candidate",
-      "bio": "Submitted practitioner profile currently pending identity details and credential verification. Withheld from public directory.",
-      "years_experience": 0,
-      "languages": [
-        "English"
-      ],
-      "areas_of_practice": [
-        "General Wellness"
-      ],
-      "profile_photo_url": "",
-      "verification_status": "UNDER_REVIEW",
-      "is_active": false,
-      "supports_online": false,
-      "supports_in_person": false,
-      "session_rate_override": null,
-      "internal_admin_notes": "One additional unnamed practitioner profile exists in submitted material. Withheld from public directory until required identity and professional information is supplied.",
-      "created_at": "2026-09-28T07:48:03.983Z",
-      "updated_at": "2026-09-28T07:48:03.983Z"
-    },
-    {
       "id": "thp_muthoni_maina",
       "user_id": "usr_super_admin_1",
       "full_name": "Muthoni Maina",
@@ -379,63 +356,6 @@
       "internal_admin_notes": "Verified psychologist profile approved for public directory on 2026-10-02.",
       "created_at": "2026-09-30T00:00:00Z",
       "updated_at": "2026-10-02T19:26:07.2047597Z"
-    },
-    {
-      "id": "thp_onboarding_01",
-      "user_id": null,
-      "full_name": "New Practitioner 01",
-      "title": "Profile In Progress",
-      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
-      "years_experience": 0,
-      "languages": [],
-      "areas_of_practice": [],
-      "profile_photo_url": "",
-      "verification_status": "UNDER_REVIEW",
-      "is_active": false,
-      "supports_online": false,
-      "supports_in_person": false,
-      "session_rate_override": null,
-      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
-      "created_at": "2026-10-02T18:43:36.865Z",
-      "updated_at": "2026-10-02T18:43:36.865Z"
-    },
-    {
-      "id": "thp_onboarding_02",
-      "user_id": null,
-      "full_name": "New Practitioner 02",
-      "title": "Profile In Progress",
-      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
-      "years_experience": 0,
-      "languages": [],
-      "areas_of_practice": [],
-      "profile_photo_url": "",
-      "verification_status": "UNDER_REVIEW",
-      "is_active": false,
-      "supports_online": false,
-      "supports_in_person": false,
-      "session_rate_override": null,
-      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
-      "created_at": "2026-10-02T18:43:36.865Z",
-      "updated_at": "2026-10-02T18:43:36.865Z"
-    },
-    {
-      "id": "thp_onboarding_03",
-      "user_id": null,
-      "full_name": "New Practitioner 03",
-      "title": "Profile In Progress",
-      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
-      "years_experience": 0,
-      "languages": [],
-      "areas_of_practice": [],
-      "profile_photo_url": "",
-      "verification_status": "UNDER_REVIEW",
-      "is_active": false,
-      "supports_online": false,
-      "supports_in_person": false,
-      "session_rate_override": null,
-      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
-      "created_at": "2026-10-02T18:43:36.865Z",
-      "updated_at": "2026-10-02T18:43:36.865Z"
     }
   ],
   "therapist_credentials": [
@@ -1401,13 +1321,13 @@
       "platform_commission_amount": 700,
       "therapist_payable_amount": 2800,
       "adjustments": 0,
-      "settlement_status": "PAID",
+      "settlement_status": "PENDING",
       "settlement_period": "2026-09",
       "paid_at": "2026-10-10T18:45:33.688Z",
       "payout_reference": "B2C-MP-108975",
       "admin_notes": "Initial confirmed booking ready for post-session reconciliation.",
       "created_at": "2026-09-14T07:07:36.195Z",
-      "updated_at": "2026-10-10T18:45:33.688Z"
+      "updated_at": "2026-10-10T20:05:39.244Z"
     },
     {
       "id": "stl_1789672399301_n9q6",
@@ -1428,6 +1348,72 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1791662739248_y75mh",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "SETTLEMENT_UPDATED",
+      "entity_type": "SETTLEMENT",
+      "entity_id": "stl_sample_01",
+      "details": {
+        "settlement_status": "PENDING",
+        "payout_reference": "B2C-MP-108975"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-10T20:05:39.248Z"
+    },
+    {
+      "id": "aud_1791662609272_ke776",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "THERAPIST_DELETED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_onboarding_03",
+      "details": {
+        "therapistName": "New Practitioner 03"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-10T20:03:29.272Z"
+    },
+    {
+      "id": "aud_1791662600201_83d7r",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "THERAPIST_DELETED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_onboarding_02",
+      "details": {
+        "therapistName": "New Practitioner 02"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-10T20:03:20.201Z"
+    },
+    {
+      "id": "aud_1791662592566_9jvvr",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "THERAPIST_DELETED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_onboarding_01",
+      "details": {
+        "therapistName": "New Practitioner 01"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-10T20:03:12.566Z"
+    },
+    {
+      "id": "aud_1791662581523_82kz5",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "THERAPIST_DELETED",
+      "entity_type": "THERAPIST",
+      "entity_id": "thp_unnamed_pending_8",
+      "details": {
+        "therapistName": "Practitioner Candidate (Profile Incomplete)"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-10T20:03:01.524Z"
+    },
     {
       "id": "aud_1791657933690_dzoty",
       "user_id": "usr_super_admin_1",
