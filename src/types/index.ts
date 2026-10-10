@@ -219,3 +219,57 @@ export interface AuditLog {
   ip_address?: string;
   created_at: string;
 }
+
+export interface ClientProfile {
+  phone: string;
+  name: string;
+  email?: string;
+  total_bookings: number;
+  completed_sessions: number;
+  cancelled_sessions: number;
+  total_spend_kes: number;
+  first_session_date: string;
+  latest_session_date: string;
+  preferred_delivery_mode: 'ONLINE' | 'IN_PERSON' | 'MIXED';
+  lifecycle_tier: 'FIRST_TIME' | 'RETURNING' | 'LONG_TERM_CARE';
+  care_notes?: string;
+  bookings: Booking[];
+}
+
+export interface AnalyticsTrendPoint {
+  date: string;
+  label: string;
+  revenue: number;
+  bookingsCount: number;
+}
+
+export interface AnalyticsCategoryShare {
+  categoryId: string;
+  name: string;
+  count: number;
+  percentage: number;
+  revenue: number;
+}
+
+export interface AnalyticsTherapistUtilization {
+  therapistId: string;
+  name: string;
+  bookedSessions: number;
+  capacitySlots: number;
+  utilizationRate: number;
+}
+
+export interface AnalyticsData {
+  dailyRevenueTrend: AnalyticsTrendPoint[];
+  categoryDistribution: AnalyticsCategoryShare[];
+  therapistUtilization: AnalyticsTherapistUtilization[];
+  deliveryModeSplit: {
+    onlineCount: number;
+    inPersonCount: number;
+    onlinePercent: number;
+    inPersonPercent: number;
+  };
+  totalRevenue: number;
+  totalCompleted: number;
+}
+

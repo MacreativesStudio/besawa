@@ -151,7 +151,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
     {
       id: 'settlements',
       label: 'Settlements & Payouts',
-      subtitle: '80/20 Financial Ledger',
+      subtitle: '70/30 Financial Ledger',
       icon: <CreditCard className="w-4 h-4 shrink-0" />,
     },
     {

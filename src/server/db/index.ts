@@ -24,6 +24,7 @@ export interface DatabaseState {
   faqs: any[];
   testimonials: any[];
   contact_messages: any[];
+  client_profiles?: any[];
 }
 
 const DATA_DIR = path.join(process.cwd(), 'data');
@@ -563,6 +564,20 @@ class RelationalDatabase {
 
           if (this.memoryState.business_settings && this.memoryState.business_settings.contact_email !== 'care@besawa.ke') {
             this.memoryState.business_settings.contact_email = 'care@besawa.ke';
+            modified = true;
+          }
+
+          // 8. Enforce 70/30 commission model (70% Therapist / 30% Platform)
+          if (!this.memoryState.business_settings) {
+            this.memoryState.business_settings = {};
+          }
+          if (this.memoryState.business_settings.platform_commission_percent !== 30) {
+            this.memoryState.business_settings.platform_commission_percent = 30;
+            this.memoryState.business_settings.therapist_split_percent = 70;
+            modified = true;
+          }
+          if (!Array.isArray(this.memoryState.client_profiles)) {
+            this.memoryState.client_profiles = [];
             modified = true;
           }
 
@@ -1159,7 +1174,8 @@ class RelationalDatabase {
       location: 'Kilimani, Nairobi, Kenya',
       working_model: 'Scheduled appointments (In-person & Telehealth)',
       emergency_helpline_kenya: '1199 / 116 (Toll-Free Crisis Line)',
-      platform_commission_percent: 20,
+      platform_commission_percent: 30,
+      therapist_split_percent: 70,
       currency: 'KES',
       mpesa_till_number: '174379',
     };

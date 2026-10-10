@@ -25,6 +25,8 @@ import { Booking } from '../../types';
 import { Button } from '../../components/common/Button';
 import { StatusBadge } from '../../components/common/StatusBadge';
 import { useToast } from '../../context/ToastContext';
+import { ClientIntelligenceModal } from '../../components/admin/ClientIntelligenceModal';
+import { WhatsAppDispatcherModal } from '../../components/admin/WhatsAppDispatcherModal';
 
 export const AdminBookingsView: React.FC = () => {
   const { showToast } = useToast();
@@ -35,6 +37,10 @@ export const AdminBookingsView: React.FC = () => {
   const [deliveryFilter, setDeliveryFilter] = useState<string>('ALL');
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
+
+  // Client Intelligence & WhatsApp Dispatcher Modals
+  const [selectedClientForProfile, setSelectedClientForProfile] = useState<{ phone: string; name: string } | null>(null);
+  const [selectedBookingForWhatsApp, setSelectedBookingForWhatsApp] = useState<Booking | null>(null);
 
   // Cancellation prompt modal
   const [cancellingBooking, setCancellingBooking] = useState<Booking | null>(null);
@@ -224,7 +230,13 @@ export const AdminBookingsView: React.FC = () => {
                         {b.booking_reference}
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-[#1C2420]">{b.client_name}</div>
+                        <button
+                          onClick={() => setSelectedClientForProfile({ phone: b.client_phone, name: b.client_name })}
+                          className="font-semibold text-[#1C2420] hover:text-[#2D5A46] hover:underline cursor-pointer text-left block"
+                          title="Open Client Intelligence Profile"
+                        >
+                          {b.client_name}
+                        </button>
                         <div className="text-[11px] text-[#54635B]">{b.client_phone}</div>
                       </td>
                       <td className="py-3.5 px-4">
@@ -261,6 +273,14 @@ export const AdminBookingsView: React.FC = () => {
                             title="View Full Booking Dossier"
                           >
                             <Eye className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={() => setSelectedBookingForWhatsApp(b)}
+                            className="p-1.5 text-[#286E47] hover:bg-[#E8F3ED] rounded-lg cursor-pointer transition-colors"
+                            title="Dispatch WhatsApp Care Template"
+                          >
+                            <MessageCircle className="w-4 h-4" />
                           </button>
 
                           {b.status === 'CONFIRMED' && (
@@ -517,6 +537,24 @@ export const AdminBookingsView: React.FC = () => {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Client Intelligence Modal */}
+      {selectedClientForProfile && (
+        <ClientIntelligenceModal
+          clientPhone={selectedClientForProfile.phone}
+          clientName={selectedClientForProfile.name}
+          onClose={() => setSelectedClientForProfile(null)}
+          onDispatchWhatsApp={(b) => setSelectedBookingForWhatsApp(b)}
+        />
+      )}
+
+      {/* WhatsApp Care Dispatcher Modal */}
+      {selectedBookingForWhatsApp && (
+        <WhatsAppDispatcherModal
+          booking={selectedBookingForWhatsApp}
+          onClose={() => setSelectedBookingForWhatsApp(null)}
+        />
       )}
     </div>
   );

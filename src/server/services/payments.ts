@@ -138,8 +138,8 @@ export function verifyAndConfirmPayment(
     }
     paymentRecord = pay;
 
-    // 3. Generate Therapist Settlement Record
-    const commissionPercent = draft.business_settings.platform_commission_percent || 20;
+    // 3. Generate Therapist Settlement Record (70/30 Model: 70% Therapist / 30% Platform)
+    const commissionPercent = draft.business_settings.platform_commission_percent || 30;
     const gross = booking.amount;
     const commission = (gross * commissionPercent) / 100;
     const payable = gross - commission;

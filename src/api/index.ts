@@ -12,6 +12,8 @@ import {
   AuditLog,
   FAQ,
   Testimonial,
+  ClientProfile,
+  AnalyticsData,
 } from '../types';
 
 const API_BASE = '/api';
@@ -186,6 +188,17 @@ export const api = {
 
   getAdminAuditLogs: () => request<{ logs: AuditLog[] }>('/admin/audit-logs'),
   getAuditLogs: () => request<{ logs: AuditLog[] }>('/admin/audit-logs'),
+
+  // Client Intelligence & Analytics
+  getAdminClients: () => request<{ clients: ClientProfile[] }>('/admin/clients'),
+  getAdminClientProfile: (phone: string) =>
+    request<{ profile: ClientProfile }>(`/admin/clients/${encodeURIComponent(phone)}`),
+  updateClientCareNotes: (phone: string, care_notes: string) =>
+    request<{ success: boolean; message: string }>(`/admin/clients/${encodeURIComponent(phone)}/notes`, {
+      method: 'PATCH',
+      body: JSON.stringify({ care_notes }),
+    }),
+  getAdminAnalytics: () => request<AnalyticsData>('/admin/analytics'),
 
   // Content
   getFaqs: () => request<{ faqs: FAQ[] }>('/content/faqs'),

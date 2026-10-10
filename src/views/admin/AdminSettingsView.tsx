@@ -27,9 +27,9 @@ export const AdminSettingsView: React.FC = () => {
     locationAddress: 'Kilimani Consultation Rooms, Off Argwings Kodhek Rd, Nairobi, Kenya',
     operatingHours: 'Monday – Saturday: 08:00 AM – 07:00 PM EAT',
     emergencyPhone: '0710 759 422',
-    officialEmail: 'infobesawa@gmail.com',
-    therapistSplitPercent: 80,
-    platformSplitPercent: 20,
+    officialEmail: 'care@besawa.ke',
+    therapistSplitPercent: 70,
+    platformSplitPercent: 30,
     tillNumber: '174379',
     tillName: 'BE SAWA WELLBEING',
     darajaEnvironment: 'Production / Sandbox Ready',
@@ -85,7 +85,7 @@ export const AdminSettingsView: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-[#1C2420]">Clinic & System Configuration</h1>
           <p className="text-xs text-[#54635B] mt-1">
-            Manage physical consultation rooms, Daraja M-Pesa till parameters, and the 80/20 platform payout model.
+            Manage physical consultation rooms, Daraja M-Pesa till parameters, and the 70/30 platform payout model.
           </p>
         </div>
 
@@ -211,7 +211,7 @@ export const AdminSettingsView: React.FC = () => {
                 </span>
               </div>
               <span className="text-[10px] text-[#286E47] font-semibold mt-1 block">
-                Platform retains 20% for infrastructure
+                Platform retains 30% for infrastructure
               </span>
             </div>
           </div>

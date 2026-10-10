@@ -24,6 +24,10 @@ import { api } from '../../api';
 import { DashboardMetrics, Booking, FullTherapist } from '../../types';
 import { Button } from '../../components/common/Button';
 import { StatusBadge } from '../../components/common/StatusBadge';
+import { TodayAgenda } from '../../components/admin/TodayAgenda';
+import { InteractiveAnalytics } from '../../components/admin/InteractiveAnalytics';
+import { ClientIntelligenceModal } from '../../components/admin/ClientIntelligenceModal';
+import { WhatsAppDispatcherModal } from '../../components/admin/WhatsAppDispatcherModal';
 
 interface AdminOverviewViewProps {
   onTabChange: (tab: string) => void;
@@ -31,11 +35,17 @@ interface AdminOverviewViewProps {
 
 export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChange }) => {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
+  const [allBookings, setAllBookings] = useState<Booking[]>([]);
   const [recentBookings, setRecentBookings] = useState<Booking[]>([]);
   const [activeTherapistsCount, setActiveTherapistsCount] = useState<number>(3);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
+  // Modals state
+  const [selectedClientForProfile, setSelectedClientForProfile] = useState<{ phone: string; name: string } | null>(null);
+  const [selectedBookingForWhatsApp, setSelectedBookingForWhatsApp] = useState<Booking | null>(null);
+
+  const fetchOverviewData = () => {
+    setIsLoading(true);
     Promise.all([
       api.getAdminMetrics(),
       api.getAdminBookings(),
@@ -43,6 +53,7 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
     ])
       .then(([metricsData, bookingsData, therapistsData]) => {
         setMetrics(metricsData);
+        setAllBookings(bookingsData.bookings);
         setRecentBookings(bookingsData.bookings.slice(0, 6));
         if (therapistsData && therapistsData.therapists) {
           setActiveTherapistsCount(
@@ -52,7 +63,20 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
       })
       .catch((err) => console.error('Failed fetching overview data:', err))
       .finally(() => setIsLoading(false));
+  };
+
+  useEffect(() => {
+    fetchOverviewData();
   }, []);
+
+  const handleUpdateBookingStatus = async (bookingId: string, status: string) => {
+    try {
+      await api.updateBookingStatus(bookingId, status);
+      fetchOverviewData();
+    } catch (err: any) {
+      console.error('Failed updating status:', err);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -103,12 +127,12 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
             onClick={() => onTabChange('settlements')}
             leftIcon={<CreditCard className="w-3.5 h-3.5" />}
           >
-            Settlement Ledger (80/20)
+            Settlement Ledger (70/30)
           </Button>
         </div>
       </div>
 
-      {/* 1. High-Density Widescreen Metric Banner (5 Columns on Large Displays) */}
+      {/* 1. High-Density Widescreen Metric Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {/* Today's Sessions */}
         <div className="bg-white p-5 rounded-2xl border border-[#E3DED6] shadow-xs hover:border-[#2D5A46]/40 transition-all">
@@ -177,9 +201,20 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
         </div>
       </div>
 
-      {/* 2. Maximized Bento Row: Financial Ledger + Operational Dispatch Hub */}
+      {/* 2. DAILY OPERATIONAL AGENDA / TODAY'S SCHEDULE */}
+      <TodayAgenda
+        bookings={allBookings}
+        onViewClient={(phone, name) => setSelectedClientForProfile({ phone, name })}
+        onDispatchWhatsApp={(booking) => setSelectedBookingForWhatsApp(booking)}
+        onUpdateStatus={handleUpdateBookingStatus}
+      />
+
+      {/* 3. INTERACTIVE VISUAL TELEMETRY & ANALYTICS */}
+      <InteractiveAnalytics />
+
+      {/* 4. Financial Ledger + Clinical Dispatch Bento Row */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        {/* Left: Financial & Settlement Performance (80/20 Breakdown) - Spans 7 or 8 columns */}
+        {/* Left: Financial & Settlement Performance (70/30 Breakdown) */}
         <div className="xl:col-span-8 bg-white rounded-3xl p-6 sm:p-8 border border-[#E3DED6] shadow-xs space-y-6 flex flex-col justify-between">
           <div>
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EDE9E1]">
@@ -190,7 +225,7 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
                 </p>
               </div>
               <span className="inline-flex items-center text-xs font-bold uppercase tracking-wider text-[#2D5A46] bg-[#EBF2EE] px-3 py-1.5 rounded-full border border-[#2D5A46]/20 self-start sm:self-auto">
-                80% Practitioner • 20% Be Sawa
+                70% Practitioner • 30% Be Sawa
               </span>
             </div>
 
@@ -204,7 +239,7 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
               </div>
 
               <div className="p-5 rounded-2xl bg-[#EBF2EE] border border-[#2D5A46]/30">
-                <span className="text-xs font-semibold text-[#2D5A46]">Be Sawa Retained (20%)</span>
+                <span className="text-xs font-semibold text-[#2D5A46]">Be Sawa Retained (30%)</span>
                 <div className="text-2xl sm:text-3xl font-black text-[#2D5A46] mt-1.5">
                   KES {metrics?.platformRetainedRevenue?.toLocaleString() ?? 0}
                 </div>
@@ -212,7 +247,7 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
               </div>
 
               <div className="p-5 rounded-2xl bg-[#F7EFEA] border border-[#9E5D43]/30">
-                <span className="text-xs font-semibold text-[#9E5D43]">Therapist Payable (80%)</span>
+                <span className="text-xs font-semibold text-[#9E5D43]">Therapist Payable (70%)</span>
                 <div className="text-2xl sm:text-3xl font-black text-[#9E5D43] mt-1.5">
                   KES {metrics?.therapistPayableTotal?.toLocaleString() ?? 0}
                 </div>
@@ -226,23 +261,23 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
           {/* Visual Split Bar */}
           <div className="pt-3 border-t border-[#EDE9E1]/60">
             <div className="flex items-center justify-between text-xs font-bold mb-2">
-              <span className="text-[#9E5D43]">80% Therapist Payout Pool (Ethical Settlement)</span>
-              <span className="text-[#2D5A46]">20% Platform Fee</span>
+              <span className="text-[#9E5D43]">70% Therapist Payout Pool (Ethical Settlement)</span>
+              <span className="text-[#2D5A46]">30% Platform Fee</span>
             </div>
             <div className="h-3 w-full bg-[#E3DED6] rounded-full overflow-hidden flex">
-              <div className="bg-[#9E5D43] h-full transition-all" style={{ width: '80%' }} />
-              <div className="bg-[#2D5A46] h-full transition-all" style={{ width: '20%' }} />
+              <div className="bg-[#9E5D43] h-full transition-all" style={{ width: '70%' }} />
+              <div className="bg-[#2D5A46] h-full transition-all" style={{ width: '30%' }} />
             </div>
           </div>
         </div>
 
-        {/* Right: Operational Health & Clinical Dispatch Hub - Spans 4 or 5 columns */}
+        {/* Right: Operational Health & Sanctuary Dispatch Hub */}
         <div className="xl:col-span-4 bg-white rounded-3xl p-6 sm:p-8 border border-[#E3DED6] shadow-xs flex flex-col justify-between space-y-4">
           <div>
             <div className="flex items-center justify-between pb-3 border-b border-[#EDE9E1]">
               <div className="flex items-center gap-2">
                 <Building className="w-4 h-4 text-[#2D5A46]" />
-                <h3 className="text-sm font-bold text-[#1C2420]">Clinical Dispatch Hub</h3>
+                <h3 className="text-sm font-bold text-[#1C2420]">Sanctuary Dispatch Hub</h3>
               </div>
               <span className="text-[10px] font-bold text-[#286E47] bg-[#E8F3ED] px-2 py-0.5 rounded-md flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse" />
@@ -251,7 +286,6 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
             </div>
 
             <div className="space-y-3 mt-4">
-              {/* Room 1 */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-[#FBF9F5] border border-[#EDE9E1] text-xs">
                 <div>
                   <div className="font-bold text-[#1C2420]">Kilimani Room 1A (Sanctuary)</div>
@@ -262,7 +296,6 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
                 </span>
               </div>
 
-              {/* Room 2 */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-[#FBF9F5] border border-[#EDE9E1] text-xs">
                 <div>
                   <div className="font-bold text-[#1C2420]">Kilimani Room 2B (Gentle)</div>
@@ -273,81 +306,80 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
                 </span>
               </div>
 
-              {/* Google Meet Encrypted */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-[#FBF9F5] border border-[#EDE9E1] text-xs">
                 <div>
                   <div className="font-bold text-[#1C2420]">Telehealth Secure Video</div>
-                  <div className="text-[11px] text-[#54635B]">Automated Meet Link Engine</div>
+                  <div className="text-[11px] text-[#54635B]">Google Meet Encrypted Link</div>
                 </div>
-                <span className="text-[10px] font-bold text-[#2D5A46] bg-[#EBF2EE] px-2 py-0.5 rounded-md flex items-center gap-1">
-                  <Zap className="w-2.5 h-2.5 text-[#C89D57]" /> Ready
+                <span className="text-[10px] font-bold text-[#286E47] bg-[#E8F3ED] px-2 py-0.5 rounded-md">
+                  Encrypted
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="pt-2 border-t border-[#EDE9E1]">
-            <button
-              onClick={() => onTabChange('bookings')}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold text-[#2D5A46] bg-[#EBF2EE] hover:bg-[#DCE7E1] transition-colors cursor-pointer"
+          <div className="pt-4 border-t border-[#EDE9E1]">
+            <Button
+              variant="outline"
+              size="sm"
+              fullWidth
+              onClick={() => onTabChange('settings')}
+              rightIcon={<ChevronRight className="w-4 h-4" />}
             >
-              <span>Manage Live Appointments</span>
-              <ChevronRight className="w-3.5 h-3.5" />
-            </button>
+              Configure Till & Rooms
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* 3. High-Density Maximized Recent Bookings Stream Table */}
-      <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#E3DED6] shadow-xs space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#EDE9E1]">
+      {/* 5. Recent Appointments Ledger */}
+      <div className="bg-white rounded-3xl border border-[#E3DED6] shadow-xs overflow-hidden">
+        <div className="p-6 border-b border-[#EDE9E1] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-bold text-[#1C2420]">Recent Booking Activity</h2>
-            <p className="text-xs text-[#54635B]">
-              Latest client appointments dispatched through the booking engine.
+            <h2 className="text-lg font-bold text-[#1C2420]">Recent Session Bookings Ledger</h2>
+            <p className="text-xs text-[#54635B] mt-0.5">
+              Live intake stream with direct Client Intelligence drill-down and WhatsApp care dispatch.
             </p>
           </div>
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => onTabChange('bookings')}
-            className="text-xs font-bold text-[#2D5A46] hover:underline inline-flex items-center gap-1 cursor-pointer self-start sm:self-auto"
+            rightIcon={<ChevronRight className="w-4 h-4" />}
           >
-            <span>View All ({recentBookings.length} bookings)</span>
-            <ChevronRight className="w-4 h-4" />
-          </button>
+            Open Full Ledger
+          </Button>
         </div>
 
-        <div className="overflow-x-auto -mx-2 sm:mx-0">
-          <table className="w-full text-left text-xs min-w-[760px]">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs">
             <thead className="bg-[#FBF9F5] text-[#78867E] uppercase font-bold border-b border-[#E3DED6]">
               <tr>
-                <th className="py-3 px-4">Reference</th>
-                <th className="py-3 px-4">Client</th>
-                <th className="py-3 px-4">Service</th>
-                <th className="py-3 px-4">Therapist</th>
-                <th className="py-3 px-4">Date & Time</th>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4 text-right">Actions</th>
+                <th className="py-3.5 px-4">Ref Code</th>
+                <th className="py-3.5 px-4">Client Identity</th>
+                <th className="py-3.5 px-4">Service & Delivery</th>
+                <th className="py-3.5 px-4">Therapist</th>
+                <th className="py-3.5 px-4">Scheduled Date</th>
+                <th className="py-3.5 px-4">Status</th>
+                <th className="py-3.5 px-4 text-right">Care Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#EDE9E1]">
               {recentBookings.map((booking) => (
                 <tr key={booking.id} className="hover:bg-[#FBF9F5] transition-colors">
-                  <td className="py-3.5 px-4 font-bold text-[#2D5A46] whitespace-nowrap">
+                  <td className="py-3.5 px-4 font-mono font-bold text-[#1C2420]">
                     {booking.booking_reference}
                   </td>
                   <td className="py-3.5 px-4">
-                    <div className="font-semibold text-[#1C2420]">{booking.client_name}</div>
-                    <div className="text-[11px] text-[#54635B] flex items-center gap-1.5 mt-0.5">
-                      <span>{booking.client_phone}</span>
-                      <a
-                        href={`https://wa.me/${booking.client_phone.replace(/\D/g, '')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[#2D5A46] hover:text-[#1E3F30] p-0.5"
-                        title="Open WhatsApp Chat with Client"
-                      >
-                        <MessageCircle className="w-3 h-3" />
-                      </a>
+                    <button
+                      onClick={() => setSelectedClientForProfile({ phone: booking.client_phone, name: booking.client_name })}
+                      className="font-bold text-[#1C2420] hover:text-[#2D5A46] hover:underline cursor-pointer text-left block"
+                      title="Open Client Intelligence Modal"
+                    >
+                      {booking.client_name}
+                    </button>
+                    <div className="text-[11px] text-[#78867E] mt-0.5">
+                      {booking.client_phone}
                     </div>
                   </td>
                   <td className="py-3.5 px-4">
@@ -375,12 +407,21 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
                     <StatusBadge status={booking.status} size="sm" />
                   </td>
                   <td className="py-3.5 px-4 text-right whitespace-nowrap">
-                    <button
-                      onClick={() => onTabChange('bookings')}
-                      className="px-3 py-1.5 rounded-xl text-xs font-semibold text-[#2D5A46] bg-[#EBF2EE] hover:bg-[#DCE7E1] transition-colors cursor-pointer"
-                    >
-                      Manage
-                    </button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        onClick={() => setSelectedBookingForWhatsApp(booking)}
+                        className="p-1.5 rounded-lg text-[#286E47] bg-[#E8F3ED] hover:bg-[#D4EBDD] transition-colors cursor-pointer"
+                        title="Dispatch WhatsApp Care Template"
+                      >
+                        <MessageCircle className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => onTabChange('bookings')}
+                        className="px-2.5 py-1 rounded-lg text-xs font-semibold text-[#2D5A46] bg-[#EBF2EE] hover:bg-[#DCE7E1] transition-colors cursor-pointer"
+                      >
+                        Manage
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -389,50 +430,22 @@ export const AdminOverviewView: React.FC<AdminOverviewViewProps> = ({ onTabChang
         </div>
       </div>
 
-      {/* 4. Platform Compliance & Daraja Gateway Safeguards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-[#E3DED6] shadow-xs">
-          <div className="flex items-center gap-2 mb-3">
-            <ShieldCheck className="w-5 h-5 text-[#2D5A46]" />
-            <h3 className="text-sm font-bold text-[#1C2420]">Clinical Compliance Standards</h3>
-          </div>
-          <ul className="space-y-2.5 text-xs text-[#54635B]">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#286E47] shrink-0 mt-0.5" />
-              <span>Zero sensitive psychotherapy clinical notes stored in unencrypted public tables.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#286E47] shrink-0 mt-0.5" />
-              <span>Mandatory practitioner credentials screening prior to public calendar dispatch.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#286E47] shrink-0 mt-0.5" />
-              <span>Server-authoritative availability slot locks (anti-double-booking protection).</span>
-            </li>
-          </ul>
-        </div>
+      {/* 6. Modals */}
+      {selectedClientForProfile && (
+        <ClientIntelligenceModal
+          clientPhone={selectedClientForProfile.phone}
+          clientName={selectedClientForProfile.name}
+          onClose={() => setSelectedClientForProfile(null)}
+          onDispatchWhatsApp={(b) => setSelectedBookingForWhatsApp(b)}
+        />
+      )}
 
-        <div className="bg-white p-6 rounded-3xl border border-[#E3DED6] shadow-xs">
-          <div className="flex items-center gap-2 mb-3">
-            <CreditCard className="w-5 h-5 text-[#2D5A46]" />
-            <h3 className="text-sm font-bold text-[#1C2420]">Safaricom Daraja Integration</h3>
-          </div>
-          <ul className="space-y-2.5 text-xs text-[#54635B]">
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#286E47] shrink-0 mt-0.5" />
-              <span>Live M-Pesa STK Push and Buy Goods Till 174379 receipt verification active.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#286E47] shrink-0 mt-0.5" />
-              <span>Automatic therapist settlement generation triggered on valid M-Pesa receipt.</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#286E47] shrink-0 mt-0.5" />
-              <span>Immutable cryptographic audit trail tracking all payment confirmations.</span>
-            </li>
-          </ul>
-        </div>
-      </div>
+      {selectedBookingForWhatsApp && (
+        <WhatsAppDispatcherModal
+          booking={selectedBookingForWhatsApp}
+          onClose={() => setSelectedBookingForWhatsApp(null)}
+        />
+      )}
     </div>
   );
 };

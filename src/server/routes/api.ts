@@ -1265,8 +1265,239 @@ apiRouter.put('/admin/settings', authMiddleware, requireRoles('SUPER_ADMIN'), (r
   db.mutate((draft) => {
     Object.assign(draft.business_settings, updates);
   });
-  db.logAudit('SETTINGS_UPDATED', 'SETTINGS', 'business_settings', updates, req.user?.id, req.user?.email);
-  res.json({ success: true, settings: db.getState().business_settings });
+});
+
+// ====================================================================
+// 9B. CLIENT INTELLIGENCE & CLINICAL RETENTION
+// ====================================================================
+
+apiRouter.get('/admin/clients', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const state = db.getState();
+  const profilesMap = new Map<string, any>();
+  const clientNotesMap = new Map<string, string>();
+
+  (state.client_profiles || []).forEach((cp: any) => {
+    if (cp.phone) clientNotesMap.set(normalizedPhone(cp.phone), cp.care_notes || '');
+  });
+
+  for (const b of state.bookings) {
+    const key = normalizedPhone(b.client_phone) || b.client_email?.toLowerCase() || b.client_name.toLowerCase();
+    if (!profilesMap.has(key)) {
+      profilesMap.set(key, {
+        phone: b.client_phone,
+        name: b.client_name,
+        email: b.client_email || '',
+        total_bookings: 0,
+        completed_sessions: 0,
+        cancelled_sessions: 0,
+        total_spend_kes: 0,
+        first_session_date: b.date,
+        latest_session_date: b.date,
+        deliveryModes: [] as string[],
+        care_notes: clientNotesMap.get(normalizedPhone(b.client_phone)) || '',
+      });
+    }
+
+    const prof = profilesMap.get(key);
+    prof.total_bookings += 1;
+    if (b.status === 'COMPLETED') prof.completed_sessions += 1;
+    if (b.status === 'CANCELLED') prof.cancelled_sessions += 1;
+    if (b.status === 'COMPLETED' || b.status === 'CONFIRMED') {
+      prof.total_spend_kes += (Number(b.amount) || 0);
+    }
+    if (b.date < prof.first_session_date) prof.first_session_date = b.date;
+    if (b.date > prof.latest_session_date) prof.latest_session_date = b.date;
+    prof.deliveryModes.push(b.delivery_mode);
+  }
+
+  const clients = Array.from(profilesMap.values()).map((p) => {
+    const onlineCount = p.deliveryModes.filter((m: string) => m === 'ONLINE').length;
+    const inPersonCount = p.deliveryModes.filter((m: string) => m === 'IN_PERSON').length;
+    const preferred_delivery_mode = onlineCount > inPersonCount ? 'ONLINE' : inPersonCount > onlineCount ? 'IN_PERSON' : 'MIXED';
+
+    let lifecycle_tier = 'FIRST_TIME';
+    if (p.total_bookings >= 5) lifecycle_tier = 'LONG_TERM_CARE';
+    else if (p.total_bookings >= 2) lifecycle_tier = 'RETURNING';
+
+    const { deliveryModes, ...rest } = p;
+    return {
+      ...rest,
+      preferred_delivery_mode,
+      lifecycle_tier,
+    };
+  });
+
+  res.json({ clients });
+});
+
+apiRouter.get('/admin/clients/:phone', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const state = db.getState();
+  const searchPhone = normalizedPhone(req.params.phone);
+  const clientBookings = state.bookings
+    .filter((b) => normalizedPhone(b.client_phone) === searchPhone || b.client_phone === req.params.phone)
+    .sort((a, b) => `${b.date}T${b.time}`.localeCompare(`${a.date}T${a.time}`));
+
+  if (clientBookings.length === 0) {
+    res.status(404).json({ error: 'Client record not found.' });
+    return;
+  }
+
+  const first = clientBookings[clientBookings.length - 1];
+  const latest = clientBookings[0];
+  const totalSpend = clientBookings
+    .filter((b) => b.status === 'COMPLETED' || b.status === 'CONFIRMED')
+    .reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const completedCount = clientBookings.filter((b) => b.status === 'COMPLETED').length;
+  const cancelledCount = clientBookings.filter((b) => b.status === 'CANCELLED').length;
+
+  const profileNote = (state.client_profiles || []).find((cp: any) => normalizedPhone(cp.phone) === searchPhone);
+
+  let lifecycle_tier = 'FIRST_TIME';
+  if (clientBookings.length >= 5) lifecycle_tier = 'LONG_TERM_CARE';
+  else if (clientBookings.length >= 2) lifecycle_tier = 'RETURNING';
+
+  const onlineCount = clientBookings.filter((b) => b.delivery_mode === 'ONLINE').length;
+  const inPersonCount = clientBookings.filter((b) => b.delivery_mode === 'IN_PERSON').length;
+  const preferredMode = onlineCount > inPersonCount ? 'ONLINE' : inPersonCount > onlineCount ? 'IN_PERSON' : 'MIXED';
+
+  res.json({
+    profile: {
+      phone: latest.client_phone,
+      name: latest.client_name,
+      email: latest.client_email,
+      total_bookings: clientBookings.length,
+      completed_sessions: completedCount,
+      cancelled_sessions: cancelledCount,
+      total_spend_kes: totalSpend,
+      first_session_date: first.date,
+      latest_session_date: latest.date,
+      preferred_delivery_mode: preferredMode,
+      lifecycle_tier,
+      care_notes: profileNote?.care_notes || '',
+      bookings: clientBookings,
+    },
+  });
+});
+
+apiRouter.patch('/admin/clients/:phone/notes', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const { phone } = req.params;
+  const { care_notes } = req.body;
+  const searchPhone = normalizedPhone(phone);
+
+  db.mutate((draft) => {
+    draft.client_profiles = draft.client_profiles || [];
+    let prof = draft.client_profiles.find((p: any) => normalizedPhone(p.phone) === searchPhone);
+    if (!prof) {
+      prof = {
+        phone,
+        care_notes: String(care_notes || '').trim(),
+        updated_at: new Date().toISOString(),
+      };
+      draft.client_profiles.push(prof);
+    } else {
+      prof.care_notes = String(care_notes || '').trim();
+      prof.updated_at = new Date().toISOString();
+    }
+  });
+
+  db.logAudit('CLIENT_CARE_NOTES_UPDATED', 'CLIENT', searchPhone, { care_notes }, req.user?.id, req.user?.email);
+  res.json({ success: true, message: 'Care coordination notes saved.' });
+});
+
+apiRouter.get('/admin/analytics', authMiddleware, requireRoles('SUPER_ADMIN', 'ADMIN'), (req: Request, res: Response) => {
+  const state = db.getState();
+
+  // 1. Daily trend for last 14 days
+  const now = new Date();
+  const dailyPoints: any[] = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - i);
+    const dateStr = d.toISOString().split('T')[0];
+    const dayLabel = d.toLocaleDateString('en-GB', { weekday: 'short', day: '2-digit' });
+
+    const daysBookings = state.bookings.filter((b) => b.date === dateStr);
+    const rev = daysBookings
+      .filter((b) => b.status === 'CONFIRMED' || b.status === 'COMPLETED')
+      .reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+
+    dailyPoints.push({
+      date: dateStr,
+      label: dayLabel,
+      revenue: rev,
+      bookingsCount: daysBookings.length,
+    });
+  }
+
+  // 2. Category Distribution
+  const catMap = new Map<string, { name: string; count: number; revenue: number }>();
+  state.service_categories.forEach((c) => {
+    catMap.set(c.id, { name: c.name, count: 0, revenue: 0 });
+  });
+
+  let totalValidBookings = 0;
+  state.bookings.forEach((b) => {
+    const srv = state.services.find((s) => s.id === b.service_id);
+    const catId = srv?.category_id || 'general';
+    if (!catMap.has(catId)) {
+      catMap.set(catId, { name: srv?.category_name || 'General Care', count: 0, revenue: 0 });
+    }
+    const item = catMap.get(catId)!;
+    item.count += 1;
+    if (b.status === 'CONFIRMED' || b.status === 'COMPLETED') {
+      item.revenue += (Number(b.amount) || 0);
+    }
+    totalValidBookings += 1;
+  });
+
+  const categoryDistribution = Array.from(catMap.entries()).map(([id, data]) => ({
+    categoryId: id,
+    name: data.name,
+    count: data.count,
+    percentage: totalValidBookings > 0 ? Math.round((data.count / totalValidBookings) * 100) : 0,
+    revenue: data.revenue,
+  })).filter((c) => c.count > 0 || c.name === 'Individual Care');
+
+  // 3. Therapist Clinical Utilization
+  const verifiedTherapists = state.therapists.filter((t) => t.is_active);
+  const therapistUtilization = verifiedTherapists.map((t) => {
+    const booked = state.bookings.filter((b) => b.therapist_id === t.id && b.status !== 'CANCELLED').length;
+    const capacity = 20; // 20 slots/week baseline
+    const rate = Math.min(100, Math.round((booked / capacity) * 100));
+    return {
+      therapistId: t.id,
+      name: t.full_name,
+      bookedSessions: booked,
+      capacitySlots: capacity,
+      utilizationRate: rate,
+    };
+  });
+
+  // 4. Delivery format split
+  const onlineCount = state.bookings.filter((b) => b.delivery_mode === 'ONLINE').length;
+  const inPersonCount = state.bookings.filter((b) => b.delivery_mode === 'IN_PERSON').length;
+  const totalDelivery = onlineCount + inPersonCount || 1;
+  const onlinePercent = Math.round((onlineCount / totalDelivery) * 100);
+  const inPersonPercent = Math.round((inPersonCount / totalDelivery) * 100);
+
+  const totalRevenue = state.bookings
+    .filter((b) => b.status === 'CONFIRMED' || b.status === 'COMPLETED')
+    .reduce((sum, b) => sum + (Number(b.amount) || 0), 0);
+  const totalCompleted = state.bookings.filter((b) => b.status === 'COMPLETED').length;
+
+  res.json({
+    dailyRevenueTrend: dailyPoints,
+    categoryDistribution,
+    therapistUtilization,
+    deliveryModeSplit: {
+      onlineCount,
+      inPersonCount,
+      onlinePercent,
+      inPersonPercent,
+    },
+    totalRevenue,
+    totalCompleted,
+  });
 });
 
 // ====================================================================

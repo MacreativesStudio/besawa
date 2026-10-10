@@ -75,7 +75,7 @@ export const AdminSettlementsView: React.FC = () => {
   };
 
   const handleExportCSV = () => {
-    const headers = ['Settlement ID,Therapist,Client,Session Date,Gross (KES),Commission (20%),Payable (80%),Status,Payout Ref\n'];
+    const headers = ['Settlement ID,Therapist,Client,Session Date,Gross (KES),Commission (30%),Payable (70%),Status,Payout Ref\n'];
     const rows = filtered.map((s) =>
       `"${s.id}","${s.therapist_name || ''}","${s.client_name || ''}","${s.session_date || ''}",${s.gross_session_amount},${s.platform_commission_amount},${s.therapist_payable_amount},"${s.settlement_status}","${s.payout_reference || ''}"\n`
     );
@@ -117,7 +117,7 @@ export const AdminSettlementsView: React.FC = () => {
         <div>
           <h1 className="text-2xl font-bold text-[#1C2420]">Practitioner Settlement Ledger</h1>
           <p className="text-xs text-[#54635B] mt-1">
-            Automated 80/20 platform split. Tracks practitioner disbursements and M-Pesa B2C payout references.
+            Automated 70/30 platform split. Tracks practitioner disbursements and M-Pesa B2C payout references.
           </p>
         </div>
 
@@ -152,7 +152,7 @@ export const AdminSettlementsView: React.FC = () => {
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-[#2D5A46]/30 bg-[#EBF2EE] shadow-xs">
-          <span className="text-xs font-semibold text-[#2D5A46]">Be Sawa Commission (20%)</span>
+          <span className="text-xs font-semibold text-[#2D5A46]">Be Sawa Commission (30%)</span>
           <div className="text-2xl sm:text-3xl font-black text-[#2D5A46] mt-1">
             KES {totalCommission.toLocaleString()}
           </div>
@@ -160,7 +160,7 @@ export const AdminSettlementsView: React.FC = () => {
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-[#9E5D43]/30 bg-[#F7EFEA] shadow-xs">
-          <span className="text-xs font-semibold text-[#9E5D43]">Therapist Payout Pool (80%)</span>
+          <span className="text-xs font-semibold text-[#9E5D43]">Therapist Payout Pool (70%)</span>
           <div className="text-2xl sm:text-3xl font-black text-[#9E5D43] mt-1">
             KES {totalPayable.toLocaleString()}
           </div>
@@ -234,8 +234,8 @@ export const AdminSettlementsView: React.FC = () => {
                   <th className="py-3.5 px-4">Therapist</th>
                   <th className="py-3.5 px-4">Session Date & Client</th>
                   <th className="py-3.5 px-4">Gross (100%)</th>
-                  <th className="py-3.5 px-4">Platform (20%)</th>
-                  <th className="py-3.5 px-4">Therapist (80%)</th>
+                  <th className="py-3.5 px-4">Platform (30%)</th>
+                  <th className="py-3.5 px-4">Therapist (70%)</th>
                   <th className="py-3.5 px-4">Status & Ref</th>
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
@@ -308,7 +308,7 @@ export const AdminSettlementsView: React.FC = () => {
               <div className="font-bold text-[#1C2420]">{activeSettlement.therapist_name}</div>
               <div className="text-[#54635B]">Client: {activeSettlement.client_name}</div>
               <div className="text-[#9E5D43] font-bold text-sm pt-1">
-                Therapist Net: KES {activeSettlement.therapist_payable_amount?.toLocaleString()} (80%)
+                Therapist Net: KES {activeSettlement.therapist_payable_amount?.toLocaleString()} (70%)
               </div>
             </div>
 

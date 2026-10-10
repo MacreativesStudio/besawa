@@ -45,7 +45,7 @@
       "full_name": "Muthoni Maina",
       "phone": "0710759422",
       "is_active": true,
-      "last_login_at": "2026-10-02T21:13:35.795Z",
+      "last_login_at": "2026-10-10T18:43:49.365Z",
       "created_at": "2026-09-14T07:07:36.195Z",
       "updated_at": "2026-10-02T21:11:59.288Z",
       "session_version": 4
@@ -1401,13 +1401,13 @@
       "platform_commission_amount": 700,
       "therapist_payable_amount": 2800,
       "adjustments": 0,
-      "settlement_status": "PENDING",
+      "settlement_status": "PAID",
       "settlement_period": "2026-09",
-      "paid_at": null,
-      "payout_reference": null,
+      "paid_at": "2026-10-10T18:45:33.688Z",
+      "payout_reference": "B2C-MP-108975",
       "admin_notes": "Initial confirmed booking ready for post-session reconciliation.",
       "created_at": "2026-09-14T07:07:36.195Z",
-      "updated_at": "2026-09-14T07:07:36.195Z"
+      "updated_at": "2026-10-10T18:45:33.688Z"
     },
     {
       "id": "stl_1789672399301_n9q6",
@@ -1428,6 +1428,37 @@
     }
   ],
   "audit_logs": [
+    {
+      "id": "aud_1791657933690_dzoty",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "SETTLEMENT_UPDATED",
+      "entity_type": "SETTLEMENT",
+      "entity_id": "stl_sample_01",
+      "details": {
+        "settlement_status": "PAID",
+        "payout_reference": "B2C-MP-108975"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-10T18:45:33.690Z"
+    },
+    {
+      "id": "aud_1791657829367_z5my9",
+      "user_id": "usr_super_admin_1",
+      "user_email": "admin@besawa.ke",
+      "action": "USER_LOGIN",
+      "entity_type": "USER",
+      "entity_id": "usr_super_admin_1",
+      "details": {
+        "email": "admin@besawa.ke",
+        "roles": [
+          "SUPER_ADMIN",
+          "BUSINESS_OWNER_ADMIN"
+        ]
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-10-10T18:43:49.367Z"
+    },
     {
       "id": "aud_1790975615796_5uezy",
       "user_id": "usr_super_admin_1",
@@ -2055,7 +2086,8 @@
     "location": "Kilimani, Nairobi, Kenya",
     "working_model": "Scheduled appointments (In-person & Telehealth)",
     "emergency_helpline_kenya": "1199 / 116 (Toll-Free Crisis Line)",
-    "platform_commission_percent": 20,
+    "platform_commission_percent": 30,
+    "therapist_split_percent": 70,
     "currency": "KES",
     "mpesa_till_number": "174379"
   },
@@ -2135,5 +2167,6 @@
       "created_at": "2026-09-14T07:07:36.195Z"
     }
   ],
-  "contact_messages": []
+  "contact_messages": [],
+  "client_profiles": []
 }
