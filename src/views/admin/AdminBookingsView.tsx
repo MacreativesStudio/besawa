@@ -928,8 +928,14 @@ export const AdminBookingsView: React.FC = () => {
                     type="number"
                     required
                     min={0}
-                    value={newBookingData.amount}
-                    onChange={(e) => setNewBookingData({ ...newBookingData, amount: Number(e.target.value) })}
+                    step="any"
+                    value={newBookingData.amount !== undefined && newBookingData.amount !== null ? newBookingData.amount : ''}
+                    onChange={(e) =>
+                      setNewBookingData({
+                        ...newBookingData,
+                        amount: e.target.value === '' ? ('' as any) : Number(e.target.value),
+                      })
+                    }
                     className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] font-mono focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                   />
                 </div>

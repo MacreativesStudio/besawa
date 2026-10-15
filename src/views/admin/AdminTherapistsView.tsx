@@ -423,7 +423,7 @@ export const AdminTherapistsView: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
               <label className="font-bold text-[#1C2420]">Full name<input required value={editProfile.full_name} onChange={(e) => setEditProfile({ ...editProfile, full_name: e.target.value })} className="mt-1 w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2" /></label>
               <label className="font-bold text-[#1C2420]">Professional title<input value={editProfile.title} onChange={(e) => setEditProfile({ ...editProfile, title: e.target.value })} className="mt-1 w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2" /></label>
-              <label className="font-bold text-[#1C2420]">Years of experience<input type="number" min="0" max="80" value={editProfile.years_experience} onChange={(e) => setEditProfile({ ...editProfile, years_experience: Number(e.target.value) })} className="mt-1 w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2" /></label>
+              <label className="font-bold text-[#1C2420]">Years of experience<input type="number" min="0" max="80" step="any" value={editProfile.years_experience !== undefined && editProfile.years_experience !== null ? editProfile.years_experience : ''} onChange={(e) => setEditProfile({ ...editProfile, years_experience: e.target.value === '' ? ('' as any) : Number(e.target.value) })} className="mt-1 w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2" /></label>
               <label className="font-bold text-[#1C2420]">Profile photo URL<input type="url" value={editProfile.profile_photo_url} onChange={(e) => setEditProfile({ ...editProfile, profile_photo_url: e.target.value })} className="mt-1 w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2" /></label>
             </div>
             <label className="block text-xs font-bold text-[#1C2420]">Biography<textarea rows={4} value={editProfile.bio} onChange={(e) => setEditProfile({ ...editProfile, bio: e.target.value })} className="mt-1 w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl p-3" /></label>
@@ -676,9 +676,10 @@ export const AdminTherapistsView: React.FC = () => {
                   </label>
                   <input
                     type="number"
-                    min="1"
-                    value={newTherapistData.years_experience}
-                    onChange={(e) => setNewTherapistData({ ...newTherapistData, years_experience: Number(e.target.value) })}
+                    min="0"
+                    step="any"
+                    value={newTherapistData.years_experience !== undefined && newTherapistData.years_experience !== null ? newTherapistData.years_experience : ''}
+                    onChange={(e) => setNewTherapistData({ ...newTherapistData, years_experience: e.target.value === '' ? ('' as any) : Number(e.target.value) })}
                     className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                   />
                 </div>

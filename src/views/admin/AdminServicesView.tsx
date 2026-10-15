@@ -468,7 +468,7 @@ export const AdminServicesView: React.FC = () => {
                   name: '',
                   category_id: categories[0]?.id || '',
                   duration_minutes: 50,
-                  price: 1500,
+                  price: 3000,
                   currency: 'KES',
                   delivery_mode: 'BOTH',
                   description: '',
@@ -490,7 +490,7 @@ export const AdminServicesView: React.FC = () => {
                   isNew: true,
                   name: '',
                   number_of_sessions: 4,
-                  price: 5500,
+                  price: 12000,
                   currency: 'KES',
                   validity_days: 60,
                   description: 'A focused sequences of sessions designed for meaningful, sustainable emotional progress.',
@@ -1159,12 +1159,12 @@ export const AdminServicesView: React.FC = () => {
                   <label className="block font-semibold text-[#1C2420] mb-1">Duration (Minutes)</label>
                   <input
                     type="number"
-                    min={15}
+                    min={1}
                     max={180}
-                    step={5}
-                    value={editingService.duration_minutes || 50}
+                    step="any"
+                    value={editingService.duration_minutes !== undefined && editingService.duration_minutes !== null ? editingService.duration_minutes : ''}
                     onChange={(e) =>
-                      setEditingService({ ...editingService, duration_minutes: Number(e.target.value) })
+                      setEditingService({ ...editingService, duration_minutes: e.target.value === '' ? ('' as any) : Number(e.target.value) })
                     }
                     className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                   />
@@ -1178,10 +1178,10 @@ export const AdminServicesView: React.FC = () => {
                     type="number"
                     required
                     min={0}
-                    step={100}
-                    value={editingService.price || 1500}
+                    step="any"
+                    value={editingService.price !== undefined && editingService.price !== null ? editingService.price : ''}
                     onChange={(e) =>
-                      setEditingService({ ...editingService, price: Number(e.target.value) })
+                      setEditingService({ ...editingService, price: e.target.value === '' ? ('' as any) : Number(e.target.value) })
                     }
                     className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] font-mono focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                   />
@@ -1300,11 +1300,12 @@ export const AdminServicesView: React.FC = () => {
                   <input
                     type="number"
                     required
-                    min={2}
+                    min={1}
                     max={50}
-                    value={editingPackage.number_of_sessions || 4}
+                    step="any"
+                    value={editingPackage.number_of_sessions !== undefined && editingPackage.number_of_sessions !== null ? editingPackage.number_of_sessions : ''}
                     onChange={(e) =>
-                      setEditingPackage({ ...editingPackage, number_of_sessions: Number(e.target.value) })
+                      setEditingPackage({ ...editingPackage, number_of_sessions: e.target.value === '' ? ('' as any) : Number(e.target.value) })
                     }
                     className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                   />
@@ -1314,11 +1315,12 @@ export const AdminServicesView: React.FC = () => {
                   <label className="block font-semibold text-[#1C2420] mb-1">Validity (Days)</label>
                   <input
                     type="number"
-                    min={30}
+                    min={1}
                     max={365}
-                    value={editingPackage.validity_days || 60}
+                    step="any"
+                    value={editingPackage.validity_days !== undefined && editingPackage.validity_days !== null ? editingPackage.validity_days : ''}
                     onChange={(e) =>
-                      setEditingPackage({ ...editingPackage, validity_days: Number(e.target.value) })
+                      setEditingPackage({ ...editingPackage, validity_days: e.target.value === '' ? ('' as any) : Number(e.target.value) })
                     }
                     className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                   />
@@ -1330,11 +1332,11 @@ export const AdminServicesView: React.FC = () => {
                 <input
                   type="number"
                   required
-                  min={100}
-                  step={500}
-                  value={editingPackage.price || 5500}
+                  min={0}
+                  step="any"
+                  value={editingPackage.price !== undefined && editingPackage.price !== null ? editingPackage.price : ''}
                   onChange={(e) =>
-                    setEditingPackage({ ...editingPackage, price: Number(e.target.value) })
+                    setEditingPackage({ ...editingPackage, price: e.target.value === '' ? ('' as any) : Number(e.target.value) })
                   }
                   className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2.5 text-xs text-[#1C2420] font-mono focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                 />
@@ -1518,8 +1520,9 @@ export const AdminServicesView: React.FC = () => {
                   <input
                     type="number"
                     min={1}
-                    value={editingFaq.display_order || 1}
-                    onChange={(e) => setEditingFaq({ ...editingFaq, display_order: Number(e.target.value) })}
+                    step="any"
+                    value={editingFaq.display_order !== undefined && editingFaq.display_order !== null ? editingFaq.display_order : ''}
+                    onChange={(e) => setEditingFaq({ ...editingFaq, display_order: e.target.value === '' ? ('' as any) : Number(e.target.value) })}
                     className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3 py-2 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
                   />
                 </div>

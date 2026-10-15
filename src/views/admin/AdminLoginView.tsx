@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lock, Mail, ArrowRight, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { Lock, Mail, ArrowRight, ShieldCheck, ShieldAlert, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/common/Button';
 import { useToast } from '../../context/ToastContext';
@@ -15,6 +15,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({ navigate }) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Set noindex meta tag for search engines while on the private admin view
@@ -103,7 +104,7 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({ navigate }) => {
                 type="email"
                 required
                 autoComplete="email"
-                placeholder="name@besawa.ke"
+                placeholder="infobesawa@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#1C2420] placeholder-[#A09D96] focus:outline-none focus:ring-2 focus:ring-[#2D5A46]"
@@ -116,16 +117,25 @@ export const AdminLoginView: React.FC<AdminLoginViewProps> = ({ navigate }) => {
               Password
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-[#78867E] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Lock className="w-4 h-4 text-[#78867E] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 required
                 autoComplete="current-password"
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl pl-10 pr-4 py-2.5 text-sm text-[#1C2420] placeholder-[#A09D96] focus:outline-none focus:ring-2 focus:ring-[#2D5A46]"
+                className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl pl-10 pr-10 py-2.5 text-sm text-[#1C2420] placeholder-[#A09D96] focus:outline-none focus:ring-2 focus:ring-[#2D5A46]"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#78867E] hover:text-[#1C2420] focus:outline-none p-1 rounded-md transition-colors cursor-pointer"
+                title={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 

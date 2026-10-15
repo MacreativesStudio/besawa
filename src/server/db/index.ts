@@ -91,11 +91,17 @@ class RelationalDatabase {
             }
           }
 
-          // 2. Ensure Founder (Muthoni Maina) has BUSINESS_OWNER_ADMIN role
+          // 2. Ensure Founder (Muthoni Maina) has BUSINESS_OWNER_ADMIN role and primary email infobesawa@gmail.com
           const founderUser = this.memoryState.users.find(
-            (u) => u.email === 'admin@besawa.ke' || u.email === 'admin@besawa.co.ke' || u.full_name.includes('Helen') || u.full_name.includes('Muthoni')
+            (u) =>
+              u.email === 'infobesawa@gmail.com' ||
+              u.email === 'admin@besawa.ke' ||
+              u.email === 'admin@besawa.co.ke' ||
+              u.full_name?.includes('Helen') ||
+              u.full_name?.includes('Muthoni')
           );
           if (founderUser) {
+            founderUser.email = 'infobesawa@gmail.com';
             founderUser.full_name = 'Muthoni Maina';
             const hasOwnerRole = this.memoryState.user_roles.some(
               (ur) => ur.user_id === founderUser.id && (ur.role_id === 'role_business_owner_admin' || ur.role_id === 'BUSINESS_OWNER_ADMIN')
@@ -612,10 +618,10 @@ class RelationalDatabase {
 
     const user = this.memoryState.users.find((candidate) => {
       const candidateEmail = candidate.email?.trim().toLowerCase();
+      const ownerAliases = ['infobesawa@gmail.com', 'admin@besawa.ke', 'admin@besawa.co.ke'];
       return (
         candidateEmail === email ||
-        (email === 'admin@besawa.co.ke' && candidateEmail === 'admin@besawa.ke') ||
-        (email === 'admin@besawa.ke' && candidateEmail === 'admin@besawa.co.ke')
+        (ownerAliases.includes(email) && ownerAliases.includes(candidateEmail || ''))
       );
     });
 
@@ -670,7 +676,7 @@ class RelationalDatabase {
     const users = [
       {
         id: 'usr_super_admin_1',
-        email: 'admin@besawa.ke',
+        email: 'infobesawa@gmail.com',
         password_hash: adminPasswordHash,
         full_name: 'Muthoni Maina',
         phone: '0710759422',

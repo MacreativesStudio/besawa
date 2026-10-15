@@ -85,12 +85,14 @@ apiRouter.post('/auth/login', async (req: Request, res: Response) => {
     }
 
     const state = db.getState();
-    const user = state.users.find(
-      (u) =>
-        u.email.toLowerCase() === inputEmail ||
-        (inputEmail === 'admin@besawa.co.ke' && u.email.toLowerCase() === 'admin@besawa.ke') ||
-        (inputEmail === 'admin@besawa.ke' && u.email.toLowerCase() === 'admin@besawa.co.ke')
-    );
+    const ownerAliases = ['infobesawa@gmail.com', 'admin@besawa.ke', 'admin@besawa.co.ke'];
+    const user = state.users.find((u) => {
+      const uEmail = u.email.toLowerCase();
+      return (
+        uEmail === inputEmail ||
+        (ownerAliases.includes(inputEmail) && ownerAliases.includes(uEmail))
+      );
+    });
 
     if (!user || !user.is_active) {
       recordFailedLogin(rateLimitKey);
@@ -1208,7 +1210,8 @@ apiRouter.delete('/admin/bookings/:id', authMiddleware, requireRoles('SUPER_ADMI
     if (idx !== -1) {
       bookingRef = draft.bookings[idx].booking_reference;
       draft.bookings.splice(idx, 1);
-      // Clean up any pending settlement
+      // Clean up associated payments and settlements (Cascade Delete)
+      draft.payments = draft.payments.filter((p) => p.booking_id !== id);
       draft.settlements = draft.settlements.filter((s) => s.booking_id !== id);
       deleted = true;
     }
@@ -1427,8 +1430,11 @@ apiRouter.get('/admin/metrics', authMiddleware, requireRoles('SUPER_ADMIN', 'ADM
   const confirmedBookings = state.bookings.filter((b) => b.status === 'CONFIRMED').length;
   const completedSessions = state.bookings.filter((b) => b.status === 'COMPLETED').length;
 
-  // Real financial aggregates from confirmed/completed payments only
-  const confirmedPayments = state.payments.filter((p) => p.status === 'CONFIRMED');
+  // Real financial aggregates from confirmed/completed payments belonging to active bookings
+  const activeBookingIds = new Set(state.bookings.map((b) => b.id));
+  const confirmedPayments = state.payments.filter(
+    (p) => p.status === 'CONFIRMED' && (!p.booking_id || activeBookingIds.has(p.booking_id))
+  );
   const grossRevenue = confirmedPayments.reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
 
   const settlements = state.settlements.filter((s) => s.settlement_status !== 'CANCELLED');

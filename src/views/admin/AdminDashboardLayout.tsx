@@ -19,6 +19,8 @@ import {
   Sparkles,
   KeyRound,
   Lock,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Logo } from '../../components/common/Logo';
@@ -48,6 +50,9 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordStatus, setPasswordStatus] = useState<{ type: 'success' | 'error' | null; message: string }>({
     type: null,
     message: '',
@@ -190,51 +195,52 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
 
       {/* Sidebar (Desktop Collapsible + Mobile Slide-over) */}
       <aside
-        className={`fixed lg:sticky top-0 bottom-0 left-0 z-50 bg-white border-r border-[#E3DED6] flex flex-col justify-between transition-all duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed lg:sticky top-0 bottom-0 left-0 z-50 bg-white border-r border-[#E3DED6] flex flex-col transition-all duration-300 ease-in-out lg:translate-x-0 ${
           mobileSidebarOpen ? 'translate-x-0 shadow-2xl w-72' : '-translate-x-full lg:translate-x-0'
-        } ${isSidebarCollapsed ? 'lg:w-20' : 'lg:w-72'} h-screen shrink-0 select-none`}
+        } ${isSidebarCollapsed ? 'lg:w-20' : 'lg:w-72'} h-screen h-[100dvh] max-h-screen max-h-[100dvh] shrink-0 select-none`}
       >
-        <div className="flex flex-col h-full overflow-y-auto overflow-x-hidden">
-          {/* Brand Header */}
-          <div className="p-4 sm:p-5 border-b border-[#EDE9E1] flex items-center justify-between">
-            <button
-              onClick={() => handleTabClick('overview')}
-              className={`text-left cursor-pointer focus:outline-none transition-all ${
-                isSidebarCollapsed ? 'mx-auto' : ''
-              }`}
-              aria-label="Be Sawa Admin Overview"
-            >
-              {!isSidebarCollapsed ? (
-                <>
-                  <Logo variant="horizontal" size="sm" />
-                  <div className="flex items-center gap-1.5 mt-1.5">
-                    <span className="text-[10px] uppercase font-black tracking-widest px-2 py-0.5 rounded-md bg-[#2D5A46] text-white">
-                      Admin Console
-                    </span>
-                    <span className="text-[10px] text-[#78867E] font-medium">v2.5 Live</span>
-                  </div>
-                </>
-              ) : (
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#1E3F30] to-[#2D5A46] text-white flex items-center justify-center font-bold text-sm shadow-sm border border-[#C89D57]/30">
-                  BS
+        {/* Pinned Brand Header (Always at top) */}
+        <div className="shrink-0 p-4 sm:p-5 border-b border-[#EDE9E1] flex items-center justify-between bg-white z-10">
+          <button
+            onClick={() => handleTabClick('overview')}
+            className={`text-left cursor-pointer focus:outline-none transition-all ${
+              isSidebarCollapsed ? 'mx-auto' : ''
+            }`}
+            aria-label="Be Sawa Admin Overview"
+          >
+            {!isSidebarCollapsed ? (
+              <>
+                <Logo variant="horizontal" size="sm" />
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  <span className="text-[10px] uppercase font-black tracking-widest px-2 py-0.5 rounded-md bg-[#2D5A46] text-white">
+                    Admin Console
+                  </span>
+                  <span className="text-[10px] text-[#78867E] font-medium">v2.5 Live</span>
                 </div>
-              )}
-            </button>
+              </>
+            ) : (
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#1E3F30] to-[#2D5A46] text-white flex items-center justify-center font-bold text-sm shadow-sm border border-[#C89D57]/30">
+                BS
+              </div>
+            )}
+          </button>
 
-            {/* Mobile close button */}
-            <button
-              onClick={() => setMobileSidebarOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg text-[#54635B] hover:text-[#1C2420] hover:bg-[#F4EFEA]"
-              aria-label="Close Admin Navigation"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+          {/* Mobile close button */}
+          <button
+            onClick={() => setMobileSidebarOpen(false)}
+            className="lg:hidden p-1.5 rounded-lg text-[#54635B] hover:text-[#1C2420] hover:bg-[#F4EFEA]"
+            aria-label="Close Admin Navigation"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
+        {/* Middle Navigation Area (Smooth Independent Scroll) */}
+        <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden overscroll-contain px-3 py-3 space-y-3">
           {/* User Profile Card */}
           <div
-            className={`p-3 mx-3 my-3 bg-[#FBF9F5] rounded-2xl border border-[#EDE9E1] transition-all ${
-              isSidebarCollapsed ? 'text-center p-2 mx-2' : ''
+            className={`p-3 bg-[#FBF9F5] rounded-2xl border border-[#EDE9E1] transition-all ${
+              isSidebarCollapsed ? 'text-center p-2' : ''
             }`}
           >
             <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
@@ -256,7 +262,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
           </div>
 
           {/* Navigation Links */}
-          <div className="px-3 py-1 flex-1">
+          <div className="py-1">
             {!isSidebarCollapsed && (
               <div className="text-[10px] font-bold uppercase tracking-wider text-[#78867E] px-3 mb-2 flex items-center justify-between">
                 <span>Platform Modules</span>
@@ -314,7 +320,7 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
 
           {/* Quick System Health Box (Shown when expanded) */}
           {!isSidebarCollapsed && (
-            <div className="p-3.5 mx-3 mb-3 bg-[#EBF2EE]/70 rounded-2xl border border-[#2D5A46]/15">
+            <div className="p-3.5 bg-[#EBF2EE]/70 rounded-2xl border border-[#2D5A46]/15">
               <div className="flex items-center justify-between text-[11px] font-bold text-[#2D5A46] mb-1">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-[#286E47] animate-pulse" />
@@ -323,54 +329,57 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
                 <Activity className="w-3.5 h-3.5 text-[#2D5A46]" />
               </div>
               <p className="text-[10px] text-[#54635B] leading-relaxed">
-                Daraja C2B/STK Engine live with instant 80/20 practitioner split ledger.
+                Daraja C2B/STK Engine live with instant 70/30 practitioner split ledger.
               </p>
             </div>
           )}
 
-          {/* Bottom Actions & Collapse Toggle */}
-          <div className="p-3 border-t border-[#EDE9E1] space-y-2 bg-white">
-            {/* Desktop Sidebar Collapse Toggle */}
-            <button
-              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-              className="hidden lg:flex w-full items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#54635B] hover:text-[#1C2420] hover:bg-[#F4EFEA] transition-colors cursor-pointer"
-              title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar to Icon Rail'}
-            >
-              {isSidebarCollapsed ? (
-                <PanelLeftOpen className="w-4 h-4 text-[#2D5A46]" />
-              ) : (
-                <>
-                  <PanelLeftClose className="w-4 h-4 text-[#78867E]" />
-                  <span>Collapse Rail</span>
-                </>
-              )}
-            </button>
+          {/* Safe Bottom Clearance Spacer */}
+          <div className="h-4" />
+        </div>
 
-            <button
-              onClick={() => navigate('/')}
-              className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#54635B] hover:text-[#1C2420] hover:bg-[#F4EFEA] border border-[#E3DED6] transition-colors cursor-pointer ${
-                isSidebarCollapsed ? 'px-2' : ''
-              }`}
-              title="Return to Public Website"
-            >
-              <ExternalLink className="w-3.5 h-3.5 text-[#78867E]" />
-              {!isSidebarCollapsed && <span>Public Website</span>}
-            </button>
+        {/* Bottom Actions & Collapse Toggle (Pinned Footer - Always Visible & Reachable) */}
+        <div className="shrink-0 p-3 border-t border-[#EDE9E1] space-y-2 bg-white z-10 mt-auto">
+          {/* Desktop Sidebar Collapse Toggle */}
+          <button
+            onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+            className="hidden lg:flex w-full items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#54635B] hover:text-[#1C2420] hover:bg-[#F4EFEA] transition-colors cursor-pointer"
+            title={isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar to Icon Rail'}
+          >
+            {isSidebarCollapsed ? (
+              <PanelLeftOpen className="w-4 h-4 text-[#2D5A46]" />
+            ) : (
+              <>
+                <PanelLeftClose className="w-4 h-4 text-[#78867E]" />
+                <span>Collapse Rail</span>
+              </>
+            )}
+          </button>
 
-            <button
-              onClick={() => {
-                logout();
-                navigate('/');
-              }}
-              className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#A63B30] hover:bg-[#FCECE9] transition-colors cursor-pointer ${
-                isSidebarCollapsed ? 'px-2' : ''
-              }`}
-              title="Sign Out"
-            >
-              <LogOut className="w-3.5 h-3.5" />
-              {!isSidebarCollapsed && <span>Sign Out</span>}
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/')}
+            className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#54635B] hover:text-[#1C2420] hover:bg-[#F4EFEA] border border-[#E3DED6] transition-colors cursor-pointer ${
+              isSidebarCollapsed ? 'px-2' : ''
+            }`}
+            title="Return to Public Website"
+          >
+            <ExternalLink className="w-3.5 h-3.5 text-[#78867E]" />
+            {!isSidebarCollapsed && <span>Public Website</span>}
+          </button>
+
+          <button
+            onClick={() => {
+              logout();
+              navigate('/');
+            }}
+            className={`w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-[#A63B30] hover:bg-[#FCECE9] transition-colors cursor-pointer ${
+              isSidebarCollapsed ? 'px-2' : ''
+            }`}
+            title="Sign Out"
+          >
+            <LogOut className="w-3.5 h-3.5" />
+            {!isSidebarCollapsed && <span>Sign Out</span>}
+          </button>
         </div>
       </aside>
 
@@ -515,38 +524,68 @@ export const AdminDashboardLayout: React.FC<AdminDashboardLayoutProps> = ({
             <form onSubmit={handlePasswordSubmit} className="space-y-4 text-xs">
               <div>
                 <label className="block font-semibold text-[#1C2420] mb-1">Current Password</label>
-                <input
-                  type="password"
-                  required
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Enter current password"
-                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    required
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="Enter current password"
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78867E] hover:text-[#1C2420] focus:outline-none p-1 cursor-pointer"
+                    title={showCurrentPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showCurrentPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block font-semibold text-[#1C2420] mb-1">New Password (Min 8 chars)</label>
-                <input
-                  type="password"
-                  required
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="At least 8 characters"
-                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="At least 8 characters"
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78867E] hover:text-[#1C2420] focus:outline-none p-1 cursor-pointer"
+                    title={showNewPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
               </div>
 
               <div>
                 <label className="block font-semibold text-[#1C2420] mb-1">Confirm New Password</label>
-                <input
-                  type="password"
-                  required
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Re-enter new password"
-                  className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl px-3.5 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
-                />
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Re-enter new password"
+                    className="w-full bg-[#FBF9F5] border border-[#E3DED6] rounded-xl pl-3.5 pr-10 py-2.5 text-xs text-[#1C2420] focus:ring-2 focus:ring-[#2D5A46] focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78867E] hover:text-[#1C2420] focus:outline-none p-1 cursor-pointer"
+                    title={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                  </button>
+                </div>
               </div>
 
               <div className="pt-2 flex items-center justify-end gap-2.5">
