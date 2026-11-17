@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 
 export const supportedCurrencies = [
   { code: 'KES', label: 'Kenyan Shilling', rateFromKes: 1 },
@@ -22,16 +22,31 @@ interface CurrencyContextValue {
 const CurrencyContext = createContext<CurrencyContextValue | null>(null);
 const storageKey = 'be-sawa-display-currency';
 
+function detectCurrencyFromLocale(): CurrencyCode {
+  if (typeof navigator === 'undefined') return 'KES';
+  const locale = navigator.languages?.[0] || navigator.language || '';
+  const region = locale.split(/[-_]/)[1]?.toUpperCase();
+  if (region === 'US') return 'USD';
+  if (region === 'GB') return 'GBP';
+  if (region === 'CA') return 'CAD';
+  if (region === 'AU') return 'AUD';
+  if (region === 'AE') return 'AED';
+  if (['AT', 'BE', 'CY', 'DE', 'EE', 'ES', 'FI', 'FR', 'GR', 'HR', 'IE', 'IT', 'LT', 'LU', 'LV', 'MT', 'NL', 'PT', 'SI', 'SK'].includes(region || '')) return 'EUR';
+  return 'KES';
+}
+
+function getInitialCurrency(): CurrencyCode {
+  if (typeof window === 'undefined') return 'KES';
+  const saved = window.localStorage.getItem(storageKey) as CurrencyCode | null;
+  return saved && supportedCurrencies.some((item) => item.code === saved) ? saved : detectCurrencyFromLocale();
+}
+
 function formatCurrency(amount: number, code: CurrencyCode) {
   return new Intl.NumberFormat('en', { style: 'currency', currency: code, currencyDisplay: 'narrowSymbol', maximumFractionDigits: code === 'KES' ? 0 : 2 }).format(amount);
 }
 
 export const CurrencyProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [currency, setCurrencyState] = useState<CurrencyCode>('KES');
-  useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey) as CurrencyCode | null;
-    if (saved && supportedCurrencies.some((item) => item.code === saved)) setCurrencyState(saved);
-  }, []);
+  const [currency, setCurrencyState] = useState<CurrencyCode>(getInitialCurrency);
   const setCurrency = (nextCurrency: CurrencyCode) => {
     setCurrencyState(nextCurrency);
     window.localStorage.setItem(storageKey, nextCurrency);

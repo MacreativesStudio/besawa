@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
         </button>
 
         {/* Desktop Links */}
-        <nav className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-7">
+        <nav className="hidden 2xl:flex items-center gap-5 2xl:gap-6">
           {navLinks.map((link) => {
             const isActive = currentPath === link.path;
             return (
@@ -105,8 +105,8 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
         </nav>
 
         {/* Desktop CTA */}
-        <div className="hidden sm:flex items-center gap-3">
-          <div className="hidden xl:block"><CurrencySelector /></div>
+        <div className="hidden 2xl:flex items-center gap-3">
+          <CurrencySelector />
           <a
             href={whatsappInquiryUrl}
             target="_blank"
@@ -126,22 +126,14 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
           </Button>
         </div>
 
-        {/* Mobile Menu Toggle */}
-        <div className="flex sm:hidden items-center gap-2">
-          <a
-            href={whatsappInquiryUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 text-[#25D366] bg-[#EBF2EE] rounded-lg"
-            aria-label="WhatsApp Direct"
-          >
-            <MessageCircle className="w-5 h-5 fill-current" />
-          </a>
+        {/* Compact navigation: protects spacing on phones, tablets, and standard laptops. */}
+        <div className="flex 2xl:hidden items-center gap-1.5 sm:gap-2">
+          <CurrencySelector compact />
           <Button
             variant="primary"
             size="sm"
             onClick={() => handleNav('/book')}
-            className="text-xs px-3 py-1.5"
+            className="text-xs px-2.5 sm:px-3 py-1.5"
           >
             Book
           </Button>
@@ -157,7 +149,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-b border-[#E3DED6] px-4 pt-3 pb-6 space-y-3 shadow-lg">
+        <div className="2xl:hidden bg-white border-b border-[#E3DED6] px-4 pt-3 pb-6 space-y-3 shadow-lg">
           <div className="grid grid-cols-1 gap-1">
             {navLinks.map((link) => (
               <button
