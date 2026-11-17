@@ -61,7 +61,8 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
               </a>
             </span>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 ml-auto">
+            <CurrencySelector compact />
             <button
               onClick={() => handleNav('/lookup')}
               className="flex items-center gap-1.5 hover:underline font-medium cursor-pointer"
@@ -85,7 +86,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
         </button>
 
         {/* Desktop Links */}
-        <nav className="hidden 2xl:flex items-center gap-5 2xl:gap-6">
+        <nav className="hidden 2xl:flex items-center gap-3">
           {navLinks.map((link) => {
             const isActive = currentPath === link.path;
             return (
@@ -106,7 +107,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
         {/* Desktop CTA */}
         <div className="hidden 2xl:flex items-center gap-3">
-          <CurrencySelector />
           <a
             href={whatsappInquiryUrl}
             target="_blank"
@@ -128,7 +128,15 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
         {/* Compact navigation: protects spacing on phones, tablets, and standard laptops. */}
         <div className="flex 2xl:hidden items-center gap-1.5 sm:gap-2">
-          <CurrencySelector compact />
+          <a
+            href={whatsappInquiryUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="sm:hidden p-2 text-[#25D366] bg-[#EBF2EE] border border-[#25D366]/20 rounded-lg"
+            aria-label="WhatsApp Direct"
+          >
+            <MessageCircle className="w-4 h-4 fill-current" />
+          </a>
           <Button
             variant="primary"
             size="sm"
@@ -181,7 +189,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
           </div>
 
           <div className="pt-3 border-t border-[#E3DED6] flex flex-col gap-2">
-            <div className="flex items-center justify-between px-1 text-xs text-[#54635B]"><span>Display prices in</span><CurrencySelector compact /></div>
+            <div className="flex items-center justify-between px-1 text-xs text-[#54635B]"><span>Prices follow your selected display currency.</span><CurrencySelector compact /></div>
             <a
               href={whatsappInquiryUrl}
               target="_blank"
