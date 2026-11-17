@@ -62,7 +62,6 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
             </span>
           </div>
           <div className="flex items-center gap-3 ml-auto">
-            <CurrencySelector compact />
             <button
               onClick={() => handleNav('/lookup')}
               className="flex items-center gap-1.5 hover:underline font-medium cursor-pointer"
@@ -70,6 +69,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
               <Search className="w-3.5 h-3.5" />
               <span>Lookup Booking</span>
             </button>
+            <CurrencySelector compact />
           </div>
         </div>
       </div>
