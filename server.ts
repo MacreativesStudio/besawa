@@ -24,6 +24,12 @@ async function startServer() {
     res.setHeader('X-Frame-Options', 'DENY');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
     res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    // The production app serves no embedded third-party content. Keeping this
+    // policy here makes accidental script injection much harder to exploit.
+    if (process.env.NODE_ENV === 'production') {
+      res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+      res.setHeader('Content-Security-Policy', "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'");
+    }
     next();
   });
 
@@ -87,6 +93,9 @@ async function startServer() {
     const distPath = path.join(process.cwd(), 'dist');
     app.use(express.static(distPath));
     app.get('*', (req, res) => {
+      if (req.path === '/book' || req.path === '/lookup' || req.path.startsWith('/admin')) {
+        res.setHeader('X-Robots-Tag', 'noindex, nofollow');
+      }
       res.sendFile(path.join(distPath, 'index.html'));
     });
   }

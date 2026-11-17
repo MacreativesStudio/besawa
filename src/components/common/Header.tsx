@@ -3,6 +3,7 @@ import { Menu, X, Phone, Shield, Search, Calendar, MessageCircle, ShieldCheck } 
 import { Button } from './Button';
 import { Logo } from './Logo';
 import { useAuth } from '../../context/AuthContext';
+import { CurrencySelector } from './CurrencySelector';
 
 interface HeaderProps {
   currentPath: string;
@@ -105,6 +106,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
 
         {/* Desktop CTA */}
         <div className="hidden sm:flex items-center gap-3">
+          <div className="hidden xl:block"><CurrencySelector /></div>
           <a
             href={whatsappInquiryUrl}
             target="_blank"
@@ -187,6 +189,7 @@ export const Header: React.FC<HeaderProps> = ({ currentPath, navigate }) => {
           </div>
 
           <div className="pt-3 border-t border-[#E3DED6] flex flex-col gap-2">
+            <div className="flex items-center justify-between px-1 text-xs text-[#54635B]"><span>Display prices in</span><CurrencySelector compact /></div>
             <a
               href={whatsappInquiryUrl}
               target="_blank"

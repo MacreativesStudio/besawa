@@ -79,24 +79,29 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Be Sawa",
-        "url": "https://besawa.co.ke/",
-        "logo": "https://besawa.co.ke/favicon.svg",
-        "description": "Professional mental wellness and counselling services in Nairobi and online across Kenya.",
-        "email": "mailto:mainahelena9@gmail.com",
-        "telephone": "+254710759422",
-        "sameAs": []
-      }
-    </script>
-
-    <!-- Website structured data -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Be Sawa",
-        "url": "https://besawa.co.ke/"
+        "@graph": [
+          {
+            "@type": "ProfessionalService",
+            "@id": "https://besawa.co.ke/#organization",
+            "name": "Be Sawa",
+            "url": "https://besawa.co.ke/",
+            "logo": "https://besawa.co.ke/favicon.svg",
+            "image": "https://besawa.co.ke/images/be-sawa-social-share.jpg",
+            "description": "Professional mental wellness and counselling services in Nairobi and online across Kenya.",
+            "email": "mainahelena9@gmail.com",
+            "telephone": "+254710759422",
+            "areaServed": ["Nairobi", "Kenya", "Online"],
+            "priceRange": "KES 3,000–29,500"
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://besawa.co.ke/#website",
+            "name": "Be Sawa",
+            "url": "https://besawa.co.ke/",
+            "publisher": { "@id": "https://besawa.co.ke/#organization" },
+            "inLanguage": "en-KE"
+          }
+        ]
       }
     </script>
   </head>

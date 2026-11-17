@@ -4,6 +4,7 @@ import { Package } from '../../types';
 import { PackageCard } from '../../components/cards/PackageCard';
 import { Loader2, Sparkles, CheckCircle2, ShieldCheck } from 'lucide-react';
 import { Button } from '../../components/common/Button';
+import { CurrencySelector } from '../../components/common/CurrencySelector';
 
 interface PackagesViewProps {
   navigate: (path: string, params?: any) => void;
@@ -37,6 +38,7 @@ export const PackagesView: React.FC<PackagesViewProps> = ({ navigate }) => {
         <p className="text-base text-[#54635B] mt-3 leading-relaxed">
           Therapeutic healing is an unfolding relationship, not a one-off quick fix. Our structured packages provide predictable continuity with your chosen practitioner, scheduled accountability, and discounted session rates.
         </p>
+        <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-[#54635B]"><CurrencySelector /><span>Prices outside KES are estimates; checkout is confirmed in KES.</span></div>
       </div>
 
       {/* Packages Grid */}

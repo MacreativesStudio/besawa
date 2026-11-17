@@ -2,6 +2,7 @@ import React from 'react';
 import { Clock, MapPin, Video, ArrowRight, Shield } from 'lucide-react';
 import { Service } from '../../types';
 import { Button } from '../common/Button';
+import { PriceDisplay } from '../common/PriceDisplay';
 
 interface ServiceCardProps {
   service: Service;
@@ -44,9 +45,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({ service, onBook }) => 
       <div className="pt-4 border-t border-[#EDE9E1] flex items-center justify-between mt-2">
         <div>
           <div className="text-xs text-[#78867E]">Standard Session ({service.duration_minutes}m)</div>
-          <div className="text-lg font-bold text-[#1C2420]">
-            {service.currency} {service.price.toLocaleString()}
-          </div>
+          <PriceDisplay amount={service.price} />
         </div>
 
         <Button

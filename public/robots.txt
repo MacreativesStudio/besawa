@@ -9,6 +9,8 @@ Allow: /
 # Keep private/system areas out of search-engine crawling
 Disallow: /api/
 Disallow: /admin/
+Disallow: /book
+Disallow: /lookup
 Disallow: /config/
 Disallow: /coverage/
 Disallow: /node_modules/

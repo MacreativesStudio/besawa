@@ -356,6 +356,86 @@
       "internal_admin_notes": "Verified psychologist profile approved for public directory on 2026-10-02.",
       "created_at": "2026-09-30T00:00:00Z",
       "updated_at": "2026-10-02T19:26:07.2047597Z"
+    },
+    {
+      "id": "thp_unnamed_pending_8",
+      "user_id": null,
+      "full_name": "Practitioner Candidate (Profile Incomplete)",
+      "title": "Practitioner Candidate",
+      "bio": "Submitted practitioner profile currently pending identity details and credential verification. Withheld from public directory.",
+      "years_experience": 0,
+      "languages": [
+        "English"
+      ],
+      "areas_of_practice": [
+        "General Wellness"
+      ],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "One additional unnamed practitioner profile exists in submitted material. Withheld from public directory until required identity and professional information is supplied.",
+      "created_at": "2026-10-15T07:19:45.972Z",
+      "updated_at": "2026-10-15T07:19:45.972Z"
+    },
+    {
+      "id": "thp_onboarding_01",
+      "user_id": null,
+      "full_name": "New Practitioner 01",
+      "title": "Profile In Progress",
+      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
+      "years_experience": 0,
+      "languages": [],
+      "areas_of_practice": [],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
+      "created_at": "2026-10-15T07:19:45.972Z",
+      "updated_at": "2026-10-15T07:19:45.972Z"
+    },
+    {
+      "id": "thp_onboarding_02",
+      "user_id": null,
+      "full_name": "New Practitioner 02",
+      "title": "Profile In Progress",
+      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
+      "years_experience": 0,
+      "languages": [],
+      "areas_of_practice": [],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
+      "created_at": "2026-10-15T07:19:45.972Z",
+      "updated_at": "2026-10-15T07:19:45.972Z"
+    },
+    {
+      "id": "thp_onboarding_03",
+      "user_id": null,
+      "full_name": "New Practitioner 03",
+      "title": "Profile In Progress",
+      "bio": "This practitioner profile is being completed by the Be Sawa care team and is not available for booking.",
+      "years_experience": 0,
+      "languages": [],
+      "areas_of_practice": [],
+      "profile_photo_url": "",
+      "verification_status": "UNDER_REVIEW",
+      "is_active": false,
+      "supports_online": false,
+      "supports_in_person": false,
+      "session_rate_override": null,
+      "internal_admin_notes": "New onboarding profile. Add the practitioner’s consented identity, professional details, services, credentials, and portrait before publishing.",
+      "created_at": "2026-10-15T07:19:45.972Z",
+      "updated_at": "2026-10-15T07:19:45.972Z"
     }
   ],
   "therapist_credentials": [
@@ -1204,6 +1284,34 @@
   "payments": [],
   "settlements": [],
   "audit_logs": [
+    {
+      "id": "aud_1794416080337_5cxyk",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-11-11T16:54:40.337Z"
+    },
+    {
+      "id": "aud_1794416069465_sddm2",
+      "user_id": "system",
+      "user_email": "system@besawa.ke",
+      "action": "USER_LOGIN_FAILED",
+      "entity_type": "USER",
+      "entity_id": "usr_platform_admin_stephen",
+      "details": {
+        "email": "macreatives.global@gmail.com",
+        "reason": "Invalid password"
+      },
+      "ip_address": "127.0.0.1",
+      "created_at": "2026-11-11T16:54:29.465Z"
+    },
     {
       "id": "aud_1792046348153_6grt4",
       "user_id": "usr_super_admin_1",
@@ -2183,7 +2291,7 @@
       "0745024278"
     ],
     "whatsapp_number": "0710759422",
-    "contact_email": "infobesawa@gmail.com",
+    "contact_email": "care@besawa.ke",
     "location": "Kilimani, Nairobi, Kenya",
     "working_model": "Scheduled appointments (In-person & Telehealth)",
     "emergency_helpline_kenya": "1199 / 116 (Toll-Free Crisis Line)",

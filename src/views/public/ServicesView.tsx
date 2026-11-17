@@ -3,6 +3,7 @@ import { api } from '../../api';
 import { Service, ServiceCategory } from '../../types';
 import { ServiceCard } from '../../components/cards/ServiceCard';
 import { Loader2, ShieldCheck, HeartHandshake } from 'lucide-react';
+import { CurrencySelector } from '../../components/common/CurrencySelector';
 
 interface ServicesViewProps {
   navigate: (path: string, params?: any) => void;
@@ -46,6 +47,7 @@ export const ServicesView: React.FC<ServicesViewProps> = ({ navigate }) => {
         <p className="text-base text-[#54635B] mt-3 leading-relaxed">
           Explore our range of professional psychological interventions. Every session is held in strict clinical confidentiality, whether you connect online from home or visit our serene practice in Kilimani, Nairobi.
         </p>
+        <div className="mt-5 flex flex-wrap items-center gap-3 text-xs text-[#54635B]"><CurrencySelector /><span>Prices outside KES are estimates; checkout is confirmed in KES.</span></div>
       </div>
 
       {/* Filter Tabs */}

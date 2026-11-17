@@ -21,6 +21,8 @@ import { FounderView } from './views/public/FounderView';
 import { ResourcesView } from './views/public/ResourcesView';
 import { WhatsAppFloatingButton } from './components/common/WhatsAppFloatingButton';
 import { PlatformLoader } from './components/common/PlatformLoader';
+import { CurrencyProvider } from './context/CurrencyContext';
+import { PageSeo } from './components/common/PageSeo';
 
 // Admin views
 import { AdminLoginView } from './views/admin/AdminLoginView';
@@ -140,6 +142,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FBF9F5] text-[#1C2420]">
+      <PageSeo path={currentPath} />
       <Header currentPath={currentPath} navigate={navigate} />
 
       <main className="flex-1">
@@ -179,9 +182,11 @@ const AppContent: React.FC = () => {
 export default function App() {
   return (
     <ToastProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <CurrencyProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </CurrencyProvider>
     </ToastProvider>
   );
 }

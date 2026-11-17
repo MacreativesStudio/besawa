@@ -2,6 +2,8 @@ import React from 'react';
 import { CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
 import { Package } from '../../types';
 import { Button } from '../common/Button';
+import { PriceDisplay } from '../common/PriceDisplay';
+import { useCurrency } from '../../context/CurrencyContext';
 
 interface PackageCardProps {
   pkg: Package;
@@ -10,6 +12,7 @@ interface PackageCardProps {
 
 export const PackageCard: React.FC<PackageCardProps> = ({ pkg, onSelect }) => {
   const perSession = Math.round(pkg.price / pkg.number_of_sessions);
+  const { formatPrice } = useCurrency();
 
   return (
     <div className="bg-white rounded-2xl p-7 border border-[#E3DED6] shadow-sm hover:border-[#2D5A46] transition-all flex flex-col justify-between relative overflow-hidden">
@@ -35,7 +38,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, onSelect }) => {
           </div>
           <div className="flex items-center gap-2 text-sm text-[#1C2420]">
             <CheckCircle2 className="w-4 h-4 text-[#286E47] shrink-0" />
-            <span>KES {perSession.toLocaleString()} / session effective rate</span>
+            <span>{formatPrice(perSession)} / session effective rate</span>
           </div>
         </div>
       </div>
@@ -43,9 +46,7 @@ export const PackageCard: React.FC<PackageCardProps> = ({ pkg, onSelect }) => {
       <div className="pt-6 border-t border-[#EDE9E1] flex items-center justify-between">
         <div>
           <div className="text-xs text-[#78867E]">Complete Package</div>
-          <div className="text-2xl font-bold text-[#1C2420]">
-            {pkg.currency} {pkg.price.toLocaleString()}
-          </div>
+          <PriceDisplay amount={pkg.price} size="large" />
         </div>
 
         <Button

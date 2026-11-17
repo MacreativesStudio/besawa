@@ -28,6 +28,7 @@ import { Button } from '../../components/common/Button';
 import { BookingStepper } from '../../components/common/BookingStepper';
 import { ResponsiveImage } from '../../components/common/ResponsiveImage';
 import { useToast } from '../../context/ToastContext';
+import { PriceDisplay } from '../../components/common/PriceDisplay';
 
 interface BookingFlowViewProps {
   initialServiceId?: string;
@@ -343,9 +344,7 @@ export const BookingFlowView: React.FC<BookingFlowViewProps> = ({
                         <span className="text-xs font-semibold text-[#9E5D43] uppercase tracking-wider">
                           {s.category_name}
                         </span>
-                        <span className="text-xs font-bold text-[#1C2420]">
-                          {s.currency} {s.price.toLocaleString()}
-                        </span>
+                        <PriceDisplay amount={s.price} className="text-right" />
                       </div>
                       <h3 className="text-base font-bold text-[#1C2420] mb-1">{s.name}</h3>
                       <p className="text-xs text-[#54635B] line-clamp-2 leading-relaxed">
@@ -853,9 +852,7 @@ export const BookingFlowView: React.FC<BookingFlowViewProps> = ({
               <div className="flex items-center justify-between pt-2">
                 <div>
                   <div className="text-xs text-[#78867E]">Payable Session Fee</div>
-                  <div className="text-2xl font-black text-[#2D5A46]">
-                    {selectedService?.currency} {selectedService?.price.toLocaleString()}
-                  </div>
+                  {selectedService && <PriceDisplay amount={selectedService.price} size="large" />}
                 </div>
                 <div className="text-right text-xs text-[#54635B]">
                   <span className="font-semibold text-[#1C2420]">WhatsApp confirmation</span>

@@ -118,6 +118,11 @@ export const Footer: React.FC<FooterProps> = ({ navigate }) => {
                   Lookup Existing Booking
                 </button>
               </li>
+              <li className="pt-1">
+                <button onClick={() => navigate('/admin/login')} className="text-[#DFC085] hover:text-[#C89D57] font-medium transition-colors cursor-pointer inline-flex items-center gap-1">
+                  Practitioner &amp; Admin Portal →
+                </button>
+              </li>
             </ul>
           </div>
 
